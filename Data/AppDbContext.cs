@@ -119,7 +119,7 @@ namespace SistemaWeb_Ventas.Data
                     Celular = "987654321",
                     Direccion = "Cajamarca",
                     Correo = "admin@gmail.com",
-                    Contrasena = "Admin123",
+                    Contrasena = "admin123",
                     IdRol = 1
                 }
             );
