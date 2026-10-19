@@ -1,0 +1,174 @@
+﻿@model IEnumerable<SistemaWeb_Ventas.Models.Pedido>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mis Pedidos — Quesito Store</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+        
+        /* NAVBAR */
+        .navbar { background: transparent; padding: 20px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 40px;}
+        .navbar-brand { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 2rem; color: #fff !important; letter-spacing: 1px; text-decoration: none;}
+        .navbar-brand span { color: #e63946; }
+        
+        /* BOTONES */
+        .btn-pill-white { background: #fff; color: #000; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; border: none; transition: all 0.3s; text-decoration: none; }
+        .btn-pill-white:hover { background: #e0e0e0; color: #000; }
+        .btn-pill-outline { background: transparent; color: #fff; border: 1px solid #444; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;}
+        .btn-pill-outline:hover { border-color: #fff; color: #fff; }
+
+        /* TARJETAS DE PEDIDO */
+        .order-card { background: #111; border: 1px solid #222; border-radius: 16px; margin-bottom: 25px; overflow: hidden; transition: transform 0.2s; }
+        .order-card:hover { border-color: #333; }
+        .order-header { background: #151515; border-bottom: 1px solid #222; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .order-body { padding: 20px; }
+        
+        /* BADGES DE ESTADO */
+        .badge-status { padding: 6px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px; }
+        .status-pendiente { background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3); }
+        .status-aprobado { background: rgba(13, 202, 240, 0.15); color: #0dcaf0; border: 1px solid rgba(13, 202, 240, 0.3); }
+        .status-cancelado { background: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.3); }
+        .status-finalizado { background: rgba(25, 135, 84, 0.15); color: #198754; border: 1px solid rgba(25, 135, 84, 0.3); }
+        
+        /* TIMELINE DE SEGUIMIENTO */
+        .timeline { list-style: none; padding-left: 0; margin-top: 15px; border-left: 2px solid #333; margin-left: 10px; }
+        .timeline li { position: relative; padding-left: 25px; margin-bottom: 15px; font-size: 0.9rem; color: #aaa; }
+        .timeline li::before { content: ''; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #555; border: 2px solid #111; }
+        .timeline li.active::before { background: #e63946; box-shadow: 0 0 10px rgba(230,57,70,0.5); }
+        .timeline li.active { color: #fff; }
+        
+        .empty-state { text-align: center; padding: 60px 20px; background: #111; border-radius: 16px; border: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/">QUESITO<span>.</span></a>
+            <div class="d-flex gap-3 align-items-center">
+                <a href="/Home/Index" class="btn btn-pill-outline"><i class="bi bi-house"></i> Inicio</a>
+                <a asp-action="Catalogo" class="btn btn-pill-outline"><i class="bi bi-bag"></i> Catálogo</a>
+                <form asp-controller="Login" asp-action="Salir" method="post" class="d-inline m-0 p-0">
+                    <button type="submit" class="btn btn-pill-white">Salir <i class="bi bi-box-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container" style="max-width: 900px;">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <p class="text-uppercase mb-1" style="color:#e63946; font-size:.8rem; font-weight:600; letter-spacing:3px;">Historial</p>
+                <h2 class="fw-bold m-0">Mis Pedidos</h2>
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-box-seam mb-3 d-block" style="font-size: 3rem; color: #444;"></i>
+                <h5 class="fw-bold">Aún no tienes pedidos</h5>
+                <p class="text-muted mb-4">Explora nuestro catálogo y encuentra tu próximo outfit.</p>
+                <a asp-action="Catalogo" class="btn btn-pill-white">Ir al Catálogo <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+        }
+        else
+        {
+            @foreach (var p in Model)
+            {
+                <div class="order-card">
+                    <!-- CABECERA DEL PEDIDO -->
+                    <div class="order-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="fw-bold fs-5">Pedido #@p.IdPedido</span>
+                            <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i> @p.FechaPedido.ToString("dd MMM, yyyy")</span>
+                        </div>
+                        <div>
+                            @{
+                                var statusClass = p.EstadoPedido switch
+                                {
+                                    "Pendiente" => "status-pendiente",
+                                    "Aprobado" => "status-aprobado",
+                                    "Cancelado" => "status-cancelado",
+                                    "Finalizado" => "status-finalizado",
+                                    _ => "status-aprobado"
+                                };
+                            }
+                            <span class="badge-status @statusClass">@p.EstadoPedido</span>
+                        </div>
+                    </div>
+
+                    <!-- CUERPO DEL PEDIDO -->
+                    <div class="order-body">
+                        <div class="row">
+                            <!-- Columna Izquierda: Info General -->
+                            <div class="col-md-5 mb-4 mb-md-0">
+                                <p class="text-muted small mb-1">Tipo de Entrega</p>
+                                <p class="fw-bold mb-3"><i class="bi bi-truck me-2 text-white-50"></i>@p.TipoEntrega?.Nombre</p>
+
+                                <p class="text-muted small mb-1">Estado del Pago</p>
+                                <p class="mb-3">
+                                    @if (p.EstadoPago == "Pagado")
+                                    {
+                                        <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Pagado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning fw-bold"><i class="bi bi-clock-fill me-1"></i> Pendiente de pago</span>
+                                    }
+                                </p>
+
+                                <div class="p-3 mt-4" style="background: #0a0a0a; border-radius: 10px; border: 1px solid #222;">
+                                    <p class="text-muted small mb-1">Total del Pedido</p>
+                                    <h3 class="fw-bold m-0" style="color: #e63946;">S/ @p.Total.ToString("0.00")</h3>
+                                </div>
+                            </div>
+
+                            <!-- Columna Derecha: Timeline (Historial de Entrega) -->
+                            <div class="col-md-7">
+                                <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i> Seguimiento de Entrega</p>
+                                
+                                @if (p.Entrega?.EstadosEntrega?.Any() == true)
+                                {
+                                    <ul class="timeline">
+                                        @foreach (var e in p.Entrega.EstadosEntrega.OrderByDescending(x => x.FechaHora))
+                                        {
+                                            <li class="active">
+                                                <span class="fw-bold text-white d-block">@e.Estado</span>
+                                                <span class="text-muted" style="font-size: 0.8rem;">@e.FechaHora.ToString("dd/MM/yyyy HH:mm")</span>
+                                                @if (!string.IsNullOrEmpty(e.Observacion))
+                                                {
+                                                    <span class="d-block text-white-50 small mt-1">@e.Observacion</span>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <div class="p-3" style="background: #151515; border-radius: 10px; border: 1px dashed #333;">
+                                        <p class="text-muted small m-0"><i class="bi bi-info-circle me-2"></i>Aún no hay actualizaciones de entrega para este pedido.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

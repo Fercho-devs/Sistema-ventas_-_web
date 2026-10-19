@@ -3,40 +3,20 @@
   "WorkspaceRootPath": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\models\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:models\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\views\\login\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:views\\login\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\views\\login\\registro.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:views\\login\\registro.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\viewmodels\\usuariovm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:viewmodels\\usuariovm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\viewmodels\\loginvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:viewmodels\\loginvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|e:\\documents\\trabajos upn (fer..)\\s\u00E9ptimo ciclo\\dise\u00F1o y arquitectura de software - 16043\\sistemaweb-ventas\\controllers\\pedidocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6908425E-F07F-F8EA-6A85-8AC6EB4619FE}|SistemaWeb-Ventas.csproj|solutionrelative:controllers\\pedidocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,116 +26,59 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "LogIn.cshtml",
-              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Views\\Login\\LogIn.cshtml",
-              "RelativeDocumentMoniker": "Views\\Login\\LogIn.cshtml",
-              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Views\\Login\\LogIn.cshtml",
-              "RelativeToolTip": "Views\\Login\\LogIn.cshtml",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-10-19T00:23:54.702Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Program.cs",
-              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAABAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAwwBUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-19T04:52:30.553Z"
+              "WhenOpened": "2026-10-19T18:10:42.983Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
+              "Title": "PedidoController.cs",
+              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Controllers\\PedidoController.cs",
+              "RelativeDocumentMoniker": "Controllers\\PedidoController.cs",
+              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Controllers\\PedidoController.cs",
+              "RelativeToolTip": "Controllers\\PedidoController.cs",
+              "ViewState": "AgIAAM0AAAAAAAAAAAAUwBcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-19T16:49:37.494Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "Data\\AppDbContext.cs",
               "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Data\\AppDbContext.cs",
               "RelativeToolTip": "Data\\AppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAGwAAAAAAAAAAAAAAIUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-18T22:31:32.643Z"
+              "WhenOpened": "2026-10-18T22:31:32.643Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "LoginController.cs",
-              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Controllers\\LoginController.cs",
-              "RelativeDocumentMoniker": "Controllers\\LoginController.cs",
-              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Controllers\\LoginController.cs",
-              "RelativeToolTip": "Controllers\\LoginController.cs",
-              "ViewState": "AgIAAPgAAAAAAAAAAAAUwAQBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-19T04:40:40.341Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Usuario.cs",
-              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Models\\Usuario.cs",
-              "RelativeDocumentMoniker": "Models\\Usuario.cs",
-              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Models\\Usuario.cs",
-              "RelativeToolTip": "Models\\Usuario.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAcwCMAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-19T00:12:02.084Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "Index.cshtml",
               "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
               "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAL8AAAAAAAAAAAAAABMAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAPYBAAAAAAAAAAAAwAACAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-10-19T00:30:13.857Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Registro.cshtml",
-              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Views\\Login\\Registro.cshtml",
-              "RelativeDocumentMoniker": "Views\\Login\\Registro.cshtml",
-              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\Views\\Login\\Registro.cshtml",
-              "RelativeToolTip": "Views\\Login\\Registro.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAPAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-10-19T04:43:52.783Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "UsuarioVM.cs",
-              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\ViewModels\\UsuarioVM.cs",
-              "RelativeDocumentMoniker": "ViewModels\\UsuarioVM.cs",
-              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\ViewModels\\UsuarioVM.cs",
-              "RelativeToolTip": "ViewModels\\UsuarioVM.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-18T23:40:31.463Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "LoginVM.cs",
-              "DocumentMoniker": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\ViewModels\\LoginVM.cs",
-              "RelativeDocumentMoniker": "ViewModels\\LoginVM.cs",
-              "ToolTip": "E:\\Documents\\TRABAJOS UPN (Fer..)\\S\u00E9ptimo ciclo\\Dise\u00F1o y Arquitectura de Software - 16043\\SistemaWeb-Ventas\\ViewModels\\LoginVM.cs",
-              "RelativeToolTip": "ViewModels\\LoginVM.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAiwAcAAAA6AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-18T23:38:22.207Z"
             }
           ]
         }

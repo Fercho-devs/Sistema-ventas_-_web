@@ -1,0 +1,279 @@
+﻿@model SistemaWeb_Ventas.Models.Carrito?
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mi Carrito — Quesito Store</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+        
+        /* NAVBAR */
+        .navbar { background: transparent; padding: 20px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 40px;}
+        .navbar-brand { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 2rem; color: #fff !important; letter-spacing: 1px; text-decoration: none;}
+        .navbar-brand span { color: #e63946; }
+        
+        /* BOTONES */
+        .btn-pill-white { background: #fff; color: #000; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; border: none; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;}
+        .btn-pill-white:hover { background: #e0e0e0; color: #000; }
+        
+        .btn-pill-outline { background: transparent; color: #fff; border: 1px solid #444; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;}
+        .btn-pill-outline:hover { border-color: #fff; color: #fff; }
+
+        /* TARJETAS Y CONTENEDORES */
+        .cart-item { 
+            background: #111; 
+            border: 1px solid #222; 
+            border-radius: 16px; 
+            padding: 15px; 
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: border-color 0.3s;
+        }
+        .cart-item:hover { border-color: #444; }
+
+        .cart-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #1a1a1a;
+        }
+
+        .cart-details { flex-grow: 1; }
+        .cart-title { font-weight: 600; font-size: 1.05rem; margin-bottom: 5px; color: #fff; }
+        .cart-price { color: #aaa; font-size: 0.9rem; }
+        
+        /* CONTROLES DE CANTIDAD */
+        .qty-form { display: flex; align-items: center; gap: 5px; margin-top: 10px;}
+        .qty-input {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: #fff;
+            width: 60px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 4px;
+            font-size: 0.9rem;
+        }
+        .qty-input:focus { border-color: #e63946; outline: none; }
+        .btn-update { background: #222; border: 1px solid #444; color: #fff; border-radius: 8px; padding: 4px 10px; transition: 0.3s;}
+        .btn-update:hover { background: #333; }
+
+        .btn-remove {
+            background: transparent;
+            border: none;
+            color: #dc3545;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .btn-remove:hover { color: #ff4d4d; transform: scale(1.1); }
+
+        /* RESUMEN DE COMPRA */
+        .summary-card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 25px;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; color: #aaa; font-size: 0.95rem; }
+        .summary-total { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #222; }
+        
+        /* FORMULARIOS */
+        .form-label { font-size: 0.85rem; color: #aaa; margin-bottom: 5px; }
+        .form-select-dark, .form-control-dark {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.9rem;
+        }
+        .form-select-dark:focus, .form-control-dark:focus {
+            background: #0a0a0a;
+            color: #fff;
+            border-color: #e63946;
+            box-shadow: none;
+        }
+        .form-select-dark option { background: #111; color: #fff; }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 60px 20px; background: #111; border-radius: 16px; border: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/Home/Index">QUESITO<span>.</span></a>
+            <div class="d-flex gap-2 align-items-center">
+                <a href="/Home/Index" class="btn btn-pill-outline d-none d-md-inline-flex"><i class="bi bi-house"></i> Inicio</a>
+                <a asp-action="Catalogo" class="btn btn-pill-outline d-none d-md-inline-flex"><i class="bi bi-bag"></i> Catálogo</a>
+                <a asp-action="MisPedidos" class="btn btn-pill-white"><i class="bi bi-receipt"></i> Mis Pedidos</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <p class="text-uppercase mb-1" style="color:#e63946; font-size:.8rem; font-weight:600; letter-spacing:3px;">Revisión</p>
+                <h2 class="fw-bold m-0">Mi Carrito</h2>
+            </div>
+        </div>
+
+        @if (TempData["ErrorPedido"] != null)
+        {
+            <div class="alert alert-danger d-flex align-items-center" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; border-radius: 12px;">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <div>@TempData["ErrorPedido"]</div>
+            </div>
+        }
+
+        @if (Model == null || !Model.Detalles.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-cart-x mb-3 d-block" style="font-size: 3.5rem; color: #444;"></i>
+                <h4 class="fw-bold">Tu carrito está vacío</h4>
+                <p class="text-muted mb-4">Parece que aún no has agregado nada. Explora nuestro catálogo.</p>
+                <a asp-action="Catalogo" class="btn btn-pill-white">Ver Catálogo <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                <!-- COLUMNA IZQUIERDA: LISTA DE PRODUCTOS -->
+                <div class="col-lg-8">
+                    @foreach (var d in Model.Detalles)
+                    {
+                        <div class="cart-item">
+                            <!-- Imagen -->
+                            @if (!string.IsNullOrEmpty(d.Producto?.ImagenUrl))
+                            {
+                                <img src="@d.Producto.ImagenUrl" class="cart-img" alt="@d.Producto.Nombre">
+                            }
+                            else
+                            {
+                                <div class="cart-img d-flex justify-content-center align-items-center text-muted">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            }
+
+                            <!-- Detalles -->
+                            <div class="cart-details">
+                                <div class="cart-title">@d.Producto?.Nombre</div>
+                                <div class="cart-price">S/ @d.Producto?.Precio.ToString("0.00") c/u</div>
+                                
+                                <!-- Formulario para cambiar cantidad -->
+                                <form asp-action="ActualizarCantidadCarrito" method="post" class="qty-form">
+                                    <input type="hidden" name="idDetalle" value="@d.IdCarritoDetalle" />
+                                    <input type="number" name="cantidad" value="@d.Cantidad" min="1" max="@d.Producto!.Stock" class="qty-input" />
+                                    <button type="submit" class="btn-update" title="Actualizar cantidad"><i class="bi bi-arrow-clockwise"></i></button>
+                                </form>
+                            </div>
+
+                            <!-- Subtotal y Eliminar -->
+                            <div class="text-end d-flex flex-column align-items-end justify-content-between h-100">
+                                <span class="fw-bold fs-5 text-white mb-3">S/ @((d.Producto!.Precio * d.Cantidad).ToString("0.00"))</span>
+                                
+                                <form asp-action="EliminarDelCarrito" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este producto del carrito?');">
+                                    <input type="hidden" name="idDetalle" value="@d.IdCarritoDetalle" />
+                                    <button type="submit" class="btn-remove" title="Eliminar producto">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                    
+                    <a asp-action="Catalogo" class="btn btn-pill-outline mt-3 text-muted border-secondary">
+                        <i class="bi bi-arrow-left"></i> Seguir comprando
+                    </a>
+                </div>
+
+                <!-- COLUMNA DERECHA: RESUMEN Y PAGO -->
+                <div class="col-lg-4">
+                    <div class="summary-card">
+                        <h5 class="fw-bold mb-4">Resumen del Pedido</h5>
+                        
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span class="text-white">S/ @Model.Detalles.Sum(d => d.Producto!.Precio * d.Cantidad).ToString("0.00")</span>
+                        </div>
+                        
+                        <div class="summary-total">
+                            <span class="fw-bold">Total</span>
+                            <h3 class="fw-bold m-0" style="color: #e63946;">S/ @Model.Detalles.Sum(d => d.Producto!.Precio * d.Cantidad).ToString("0.00")</h3>
+                        </div>
+
+                        <hr style="border-color: #333; margin: 25px 0;">
+
+                        <form asp-action="ConfirmarPedido" method="post" id="formPedido" onsubmit="return validarPedido();">
+                            <div class="mb-3">
+                                <label class="form-label">Tipo de entrega</label>
+                                <select name="idTipoEntrega" asp-items="ViewBag.TiposEntrega" class="form-select form-select-dark" id="tipoEntrega" onchange="toggleDireccion(this)">
+                                    <option value="">-- Seleccionar --</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4" id="divDireccion" style="display:none">
+                                <label class="form-label">Dirección de entrega</label>
+                                <input type="text" name="direccionDestino" id="direccionDestino" class="form-control form-control-dark" placeholder="Ej. Jr. Lima 123, Cajamarca" />
+                            </div>
+
+                            <button type="submit" class="btn btn-pill-white w-100 justify-content-center py-3">
+                                Confirmar Pedido <i class="bi bi-check2-circle ms-1"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleDireccion(sel) {
+            var divDir = document.getElementById('divDireccion');
+            if (parseInt(sel.value) > 1) {
+                divDir.style.display = 'block';
+            } else {
+                divDir.style.display = 'none';
+                document.getElementById('direccionDestino').value = ''; // Limpiar por si acaso
+            }
+        }
+
+        function validarPedido() {
+            var tipo = document.getElementById('tipoEntrega').value;
+            if (!tipo) {
+                alert('Por favor seleccione el tipo de entrega.');
+                return false;
+            }
+            if (parseInt(tipo) > 1) {
+                var dir = document.getElementById('direccionDestino').value.trim();
+                if (!dir) {
+                    alert('Por favor ingrese la dirección de entrega.');
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

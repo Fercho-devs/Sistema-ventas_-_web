@@ -1,0 +1,240 @@
+﻿@model IEnumerable<SistemaWeb_Ventas.Models.Producto>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Catálogo — Quesito Store</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+        
+        /* NAVBAR */
+        .navbar { background: transparent; padding: 20px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 40px;}
+        .navbar-brand { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 2rem; color: #fff !important; letter-spacing: 1px; text-decoration: none;}
+        .navbar-brand span { color: #e63946; }
+        
+        /* BOTONES */
+        .btn-pill-white { background: #fff; color: #000; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; border: none; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;}
+        .btn-pill-white:hover { background: #e0e0e0; color: #000; }
+        
+        .btn-pill-outline { background: transparent; color: #fff; border: 1px solid #444; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;}
+        .btn-pill-outline:hover { border-color: #fff; color: #fff; }
+
+        .btn-cart { border-color: #e63946; color: #e63946; }
+        .btn-cart:hover { background: #e63946; color: #fff; border-color: #e63946; }
+
+        /* TARJETAS DE PRODUCTO */
+        .product-card { 
+            background: #111; 
+            border: 1px solid #222; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            transition: all 0.3s; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover { 
+            border-color: #444; 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        
+        .product-img-container {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+            cursor: zoom-in;
+        }
+        .product-card:hover .product-img { transform: scale(1.05); }
+
+        .product-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .category-text { font-size: 0.75rem; color: #e63946; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 5px; }
+        .product-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; color: #fff; }
+        .product-sizes { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+        .product-desc { font-size: 0.85rem; color: #aaa; margin-bottom: 15px; flex-grow: 1; }
+        .product-price { font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 15px; }
+        
+        .stock-badge { font-size: 0.75rem; color: #888; background: #1a1a1a; padding: 4px 10px; border-radius: 50px; display: inline-block; margin-bottom: 15px;}
+
+        /* FORMULARIO DE AGREGAR */
+        .form-agregar { display: flex; gap: 8px; }
+        .form-control-dark { background: #0a0a0a; border: 1px solid #333; color: #fff; border-radius: 8px; text-align: center; }
+        .form-control-dark:focus { background: #0a0a0a; border-color: #e63946; color: #fff; box-shadow: none; }
+        .btn-add-cart { background: #e63946; color: #fff; border: none; border-radius: 8px; padding: 8px 15px; font-weight: 600; transition: 0.3s; display: flex; align-items: center; justify-content: center;}
+        .btn-add-cart:hover { background: #c1121f; }
+
+        .modal-content { background: #111; border: 1px solid #222; border-radius: 16px;}
+        .modal-header { border-bottom: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/Home/Index">QUESITO<span>.</span></a>
+            <div class="d-flex gap-2 align-items-center">
+                <a href="/Home/Index" class="btn btn-pill-outline d-none d-md-inline-flex"><i class="bi bi-house"></i> Inicio</a>
+                <a asp-action="MisPedidos" class="btn btn-pill-outline d-none d-md-inline-flex"><i class="bi bi-receipt"></i> Mis Pedidos</a>
+                <a asp-action="Carrito" class="btn btn-pill-outline btn-cart">
+                    <i class="bi bi-cart3"></i> Mi Carrito
+                </a>
+                <form asp-controller="Login" asp-action="Salir" method="post" class="d-inline m-0 p-0">
+                    <button type="submit" class="btn btn-pill-white" title="Cerrar Sesión"><i class="bi bi-box-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CATÁLOGO -->
+    <div class="container pb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <p class="text-uppercase mb-1" style="color:#e63946; font-size:.8rem; font-weight:600; letter-spacing:3px;">Colección</p>
+                <h2 class="fw-bold m-0">Catálogo Quesito Store</h2>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var p in Model)
+            {
+                <div class="col">
+                    <div class="product-card">
+                        <!-- Imagen -->
+                        <div class="product-img-container">
+                            @if (!string.IsNullOrEmpty(p.ImagenUrl))
+                            {
+                                <img src="@p.ImagenUrl" class="product-img" alt="@p.Nombre"
+                                     onclick="verImagen('@p.ImagenUrl','@p.Nombre')" title="Ver imagen completa" />
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                    <i class="bi bi-image" style="font-size:2rem;"></i>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Información -->
+                        <div class="product-info">
+                            <div class="category-text">@p.Categoria?.NombreCategoria</div>
+                            <h5 class="product-title">@p.Nombre</h5>
+                            
+                            <div class="product-sizes">
+                                <i class="bi bi-tags me-1"></i> Tallas: @(string.Join(", ", (p.Talla ?? "").Split(',').Select(t => t.Trim()).Where(t => t != "")))
+                            </div>
+                            
+                            <p class="product-desc">@p.Descripcion</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="product-price m-0">S/ @p.Precio.ToString("0.00")</span>
+                                <span class="stock-badge m-0">Stock: @p.Stock</span>
+                            </div>
+
+                            <!-- Formulario agregar al carrito -->
+                            <form class="form-agregar" data-stock="@p.Stock">
+                                <input type="hidden" name="idProducto" value="@p.IdProducto" />
+                                <input type="number" name="cantidad" value="1" min="1" max="@p.Stock" class="form-control form-control-dark form-control-sm" style="width: 70px;" />
+                                <button type="submit" class="btn btn-add-cart w-100 btn-sm">
+                                    <i class="bi bi-bag-plus me-2"></i> Agregar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- MODAL IMAGEN -->
+    <div class="modal fade" id="modalImagen" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalImagenTitulo"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-0">
+                    <img id="modalImagenSrc" src="" style="width:100%; max-height:80vh; object-fit:contain;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Función para abrir el modal de la imagen
+        function verImagen(url, nombre) {
+            document.getElementById('modalImagenSrc').src = url;
+            document.getElementById('modalImagenTitulo').innerText = nombre;
+            new bootstrap.Modal(document.getElementById('modalImagen')).show();
+        }
+
+        // Lógica AJAX para agregar al carrito (idéntica a tu código original)
+        document.querySelectorAll('.form-agregar').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var stock = parseInt(form.dataset.stock);
+                var cantidadInput = form.querySelector('input[name=cantidad]');
+                var cantidad = parseInt(cantidadInput.value);
+                
+                if (!cantidad || cantidad < 1) {
+                    alert('La cantidad debe ser al menos 1.');
+                    return;
+                }
+                if (cantidad > stock) {
+                    alert('No puedes comprar más de ' + stock + ' unidad(es), es el stock disponible.');
+                    return;
+                }
+                
+                var idProducto = form.querySelector('input[name=idProducto]').value;
+                var btnSubmit = form.querySelector('button[type="submit"]');
+                var originalText = btnSubmit.innerHTML;
+                
+                // Efecto de carga en el botón
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                btnSubmit.disabled = true;
+
+                fetch('@Url.Action("AgregarCarrito")', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'idProducto=' + idProducto + '&cantidad=' + cantidad
+                })
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.mensaje);
+                    if (data.ok && data.restante <= 0) {
+                        alert('Atención: se agotará el stock de este producto.');
+                    }
+                    // Restaurar botón
+                    btnSubmit.innerHTML = originalText;
+                    btnSubmit.disabled = false;
+                })
+                .catch(() => {
+                    alert('Ocurrió un error al agregar el producto.');
+                    btnSubmit.innerHTML = originalText;
+                    btnSubmit.disabled = false;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
