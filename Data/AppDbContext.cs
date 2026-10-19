@@ -7,7 +7,6 @@ namespace SistemaWeb_Ventas.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        //**************** TABLAS ************************************
         public DbSet<Rol> Roles { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
@@ -114,9 +113,9 @@ namespace SistemaWeb_Ventas.Data
                 new Usuario
                 {
                     IdUsuario = 1,
-                    NombreCompleto = "Administrador",
+                    NombreUsuario = "Administrador",
                     DNI = "79461382",
-                    Celular = "987654321",
+                    Telefono = "987654321",
                     Direccion = "Cajamarca",
                     Correo = "admin@gmail.com",
                     Contrasena = "admin123",

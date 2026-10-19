@@ -11,7 +11,7 @@ namespace SistemaWeb_Ventas.Models
 
         [Required]
         [StringLength(100)]
-        public string NombreCompleto { get; set; } = string.Empty;
+        public string NombreUsuario { get; set; } = string.Empty;
 
         [Required]
         [StringLength(15)]
@@ -19,7 +19,7 @@ namespace SistemaWeb_Ventas.Models
 
         [Required]
         [StringLength(15)]
-        public string Celular { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
 
         [StringLength(200)]
         public string? Direccion { get; set; }

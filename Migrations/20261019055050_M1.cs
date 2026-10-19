@@ -88,9 +88,9 @@ namespace SistemaWeb_Ventas.Migrations
                 {
                     IdUsuario = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NombreCompleto = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NombreUsuario = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     DNI = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    Celular = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     Direccion = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     Correo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Contrasena = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -302,8 +302,8 @@ namespace SistemaWeb_Ventas.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "IdUsuario", "Celular", "Contrasena", "Correo", "DNI", "Direccion", "IdRol", "NombreCompleto" },
-                values: new object[] { 1, "987654321", "admin123", "admin@gmail.com", "79461382", "Cajamarca", 1, "Administrador" });
+                columns: new[] { "IdUsuario", "Contrasena", "Correo", "DNI", "Direccion", "IdRol", "NombreUsuario", "Telefono" },
+                values: new object[] { 1, "admin123", "admin@gmail.com", "79461382", "Cajamarca", 1, "Administrador", "987654321" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarritoDetalles_IdCarrito",

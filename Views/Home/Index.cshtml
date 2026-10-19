@@ -1,8 +1,261 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
+    Layout = null;
+    // Verificamos si el usuario está logueado
+    var isAuthenticated = User.Identity.IsAuthenticated;
+    var nombreUsuario = ViewBag.Nombre as string ?? User.Identity.Name; 
 }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quesito Store — Ropa Urbana en Cajamarca</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; overflow-x: hidden; }
+        
+        /* NAVBAR */
+        .navbar { background: transparent; padding: 20px 0; }
+        .navbar-brand { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 2rem; color: #fff !important; letter-spacing: 1px; }
+        .navbar-brand span { color: #e63946; }
+        
+        .nav-pill-container { background: #1a1a1a; border-radius: 50px; padding: 5px 10px; display: inline-flex; align-items: center; gap: 5px; }
+        .nav-pill-link { color: #aaa; text-decoration: none; padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; transition: all 0.3s; }
+        .nav-pill-link:hover, .nav-pill-link.active { background: #fff; color: #000; }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        /* BOTONES */
+        .btn-pill-white { background: #fff; color: #000; border-radius: 50px; padding: 10px 24px; font-weight: 600; font-size: 0.9rem; border: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-pill-white:hover { background: #e0e0e0; color: #000; }
+        .btn-pill-outline { background: transparent; color: #fff; border: 1px solid #444; border-radius: 50px; padding: 10px 24px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center;}
+        .btn-pill-outline:hover { border-color: #fff; color: #fff; }
+
+        /* HERO */
+        .hero { min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-top: 5vh; background: #0a0a0a; }
+        .hero-title { font-size: 4rem; font-weight: 300; letter-spacing: 2px; line-height: 1.1; text-transform: uppercase; margin-bottom: 20px; }
+        .hero-title span { color: #e63946; font-weight: 600; }
+        .hero-sub { font-size: 1rem; color: #888; max-width: 600px; margin: 0 auto 40px auto; line-height: 1.6; }
+
+        .btn-hero-collection { background: #fff; color: #000; border-radius: 50px; padding: 8px 8px 8px 24px; font-weight: 500; display: inline-flex; align-items: center; gap: 15px; border: none; transition: all 0.3s; text-decoration: none;}
+        .btn-hero-collection:hover { background: #eee; color: #000; }
+        .btn-hero-collection .icon-circle { background: #000; color: #fff; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        /* GALERÍA DE ARCOS */
+        .arch-gallery { display: flex; justify-content: center; align-items: flex-end; gap: 20px; margin-top: 60px; height: 350px; overflow: hidden; }
+        .arch { width: 200px; height: 300px; border-radius: 100px 100px 0 0; overflow: hidden; background: #1a1a1a; position: relative; transition: transform 0.3s; }
+        .arch img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); transition: filter 0.3s; }
+        .arch:hover img { filter: brightness(1); }
+        .arch.center { height: 350px; width: 240px; border: 2px solid #222; }
+        .arch.center img { object-fit: contain; background: #fff; padding: 20px; }
+        .arch.side-1 { height: 220px; }
+        .arch.side-2 { height: 260px; }
+
+        /* CATEGORÍAS Y FEATURES */
+        .categories { background: #0d0d0d; border-top: 1px solid #1a1a1a; padding: 60px 0; }
+        .cat-badge { background: #111; border: 1px solid #333; padding: .8rem 1.8rem; border-radius: 50px; font-size: .9rem; color: #ccc; transition: all .2s; }
+        .cat-badge:hover { background: #e63946; border-color: #e63946; color: #fff; }
+
+        .features { background: #111; border-top: 1px solid #222; padding: 60px 0; }
+        .feature-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; padding: 2rem; text-align: center; transition: border-color .2s; }
+        .feature-card:hover { border-color: #e63946; }
+        .feature-icon { font-size: 2rem; color: #e63946; margin-bottom: 1rem; }
+
+        footer { background: #050505; border-top: 1px solid #1a1a1a; color: #555; padding: 30px 0; }
+
+        /* OFFCANVAS (Barra lateral Pedidos) */
+        .offcanvas { background: #111; border-left: 1px solid #222; color: #fff; }
+        .offcanvas-header { border-bottom: 1px solid #222; }
+        
+        @@media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .nav-pill-container { display: none; }
+            .arch-gallery { height: 250px; gap: 10px; }
+            .arch { width: 120px; height: 200px; }
+            .arch.center { width: 150px; height: 250px; }
+            .arch.side-1, .arch.side-2 { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR DINÁMICO -->
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">QUESITO<span>.</span></a>
+            
+            <div class="nav-pill-container d-none d-lg-flex">
+                <a href="#" class="nav-pill-link active">Inicio</a>
+                <!-- El botón de Catálogo solo se muestra si está logueado -->
+                @if (isAuthenticated)
+                {
+                    <a asp-controller="Pedido" asp-action="Catalogo" class="nav-pill-link">Catálogo</a>
+                }
+                <a href="#" class="nav-pill-link">Ofertas</a>
+            </div>
+
+            <!-- BOTONES DE LA DERECHA -->
+            <div class="d-flex gap-3 align-items-center">
+                @if (isAuthenticated)
+                {
+                    <!-- SI ESTÁ LOGUEADO -->
+                    <span class="text-white small d-none d-md-block me-2">
+                        <i class="bi bi-person-circle me-1" style="color:#e63946"></i> @nombreUsuario
+                    </span>
+                    
+                    <button class="btn btn-pill-outline" data-bs-toggle="offcanvas" data-bs-target="#offcanvasPedidos">
+                        <i class="bi bi-receipt me-1"></i> Mis Pedidos
+                    </button>
+
+                    <form asp-controller="Login" asp-action="Salir" method="post" class="d-inline m-0 p-0">
+                        <button type="submit" class="btn btn-pill-white">
+                            Salir <i class="bi bi-box-arrow-right"></i>
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <!-- SI NO ESTÁ LOGUEADO -->
+                    <a asp-controller="Login" asp-action="LogIn" class="btn btn-pill-outline">
+                        Iniciar Sesión
+                    </a>
+                    <a asp-controller="Login" asp-action="Registro" class="btn btn-pill-white">
+                        Crear Cuenta <i class="bi bi-arrow-right"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero container">
+        <p class="text-uppercase mb-3" style="color:#e63946; font-size:.85rem; font-weight:600; letter-spacing:4px;">Ropa Urbana — Cajamarca</p>
+        
+        <h1 class="hero-title">TU ESTILO,<br /><span>TU IDENTIDAD.</span></h1>
+        
+        <p class="hero-sub">
+            Gorras, zapatillas, polos, poleras y pantalones para construir el outfit perfecto. 
+            Calidad urbana al alcance de todos.
+        </p>
+        
+        <!-- LÓGICA CONDICIONAL PARA EL BOTÓN CENTRAL -->
+        @if (isAuthenticated)
+        {
+            <!-- Si está logueado, va al catálogo -->
+            <a asp-controller="Pedido" asp-action="Catalogo" class="btn-hero-collection">
+                Comprar Ahora
+                <span class="icon-circle"><i class="bi bi-arrow-right"></i></span>
+            </a>
+        }
+        else
+        {
+            <!-- Si NO está logueado, va al Login -->
+            <a asp-controller="Login" asp-action="LogIn" class="btn-hero-collection">
+                Comprar Ahora
+                <span class="icon-circle"><i class="bi bi-arrow-right"></i></span>
+            </a>
+        }
+
+        <!-- GALERÍA DE ARCOS -->
+        <div class="arch-gallery">
+            <div class="arch side-1 d-none d-md-block"><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=600&auto=format&fit=crop" alt="Moda 1"></div>
+            <div class="arch side-2"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop" alt="Moda 2"></div>
+            <div class="arch center"><img src="~/images/Logo.png" alt="Logo Quesito Store"></div>
+            <div class="arch side-2"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=600&auto=format&fit=crop" alt="Moda 3"></div>
+            <div class="arch side-1 d-none d-md-block"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=600&auto=format&fit=crop" alt="Moda 4"></div>
+        </div>
+    </section>
+
+    <!-- CATEGORÍAS -->
+    <section class="categories">
+        <div class="container text-center">
+            <p class="text-uppercase mb-4" style="color:#888; font-size:.8rem; font-weight:600; letter-spacing:3px;">Explora nuestras categorías</p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <span class="cat-badge"><i class="bi bi-star me-2" style="color:#e63946"></i>Gorras</span>
+                <span class="cat-badge"><i class="bi bi-star me-2" style="color:#e63946"></i>Zapatillas</span>
+                <span class="cat-badge"><i class="bi bi-star me-2" style="color:#e63946"></i>Polos</span>
+                <span class="cat-badge"><i class="bi bi-star me-2" style="color:#e63946"></i>Poleras</span>
+                <span class="cat-badge"><i class="bi bi-star me-2" style="color:#e63946"></i>Pantalones</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES (Solo se muestran si NO está logueado) -->
+    @if (!isAuthenticated)
+    {
+        <section class="features">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="bi bi-truck"></i></div>
+                            <h6 class="fw-bold mb-2">Envío a Todo el Perú</h6>
+                            <p class="text-muted small mb-0">Envíos a domicilio en Cajamarca y a nivel nacional mediante empresas de transporte.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                            <h6 class="fw-bold mb-2">Seguimiento en Tiempo Real</h6>
+                            <p class="text-muted small mb-0">Consulta el estado de tu pedido desde el empaque hasta la entrega final.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+                            <h6 class="fw-bold mb-2">Compra Segura</h6>
+                            <p class="text-muted small mb-0">Registro de pagos y confirmación de pedidos gestionada por nuestro equipo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- FOOTER -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">© 2026 <strong style="color:#fff">Quesito Store</strong> — Cajamarca, Perú. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- OFFCANVAS (Barra lateral derecha para los Pedidos) -->
+    @if (isAuthenticated)
+    {
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasPedidos" aria-labelledby="offcanvasPedidosLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title fw-bold" id="offcanvasPedidosLabel"><i class="bi bi-receipt me-2" style="color:#e63946"></i>Mis Pedidos</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <p class="text-muted small">Aquí puedes ver el estado de tus compras recientes.</p>
+                
+                <!-- Aquí puedes poner un bucle foreach con los pedidos reales del cliente -->
+                <div class="p-3 mb-3" style="background:#1a1a1a; border-radius:10px; border: 1px solid #333;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold">Pedido #00123</span>
+                        <span class="badge bg-warning text-dark">En camino</span>
+                    </div>
+                    <span class="text-muted small">Hace 2 días — Total: S/ 150.00</span>
+                </div>
+
+                <div class="p-3 mb-3" style="background:#1a1a1a; border-radius:10px; border: 1px solid #333;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold">Pedido #00122</span>
+                        <span class="badge bg-success">Entregado</span>
+                    </div>
+                    <span class="text-muted small">Hace 1 semana — Total: S/ 89.90</span>
+                </div>
+
+                <a asp-controller="Pedido" asp-action="MisPedidos" class="btn btn-pill-white w-100 mt-4 justify-content-center">
+                    Ver historial completo
+                </a>
+            </div>
+        </div>
+    }
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

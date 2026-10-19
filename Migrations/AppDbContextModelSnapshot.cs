@@ -423,11 +423,6 @@ namespace SistemaWeb_Ventas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
 
-                    b.Property<string>("Celular")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
                     b.Property<string>("Contrasena")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -450,10 +445,15 @@ namespace SistemaWeb_Ventas.Migrations
                     b.Property<int>("IdRol")
                         .HasColumnType("int");
 
-                    b.Property<string>("NombreCompleto")
+                    b.Property<string>("NombreUsuario")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.HasKey("IdUsuario");
 
@@ -465,13 +465,13 @@ namespace SistemaWeb_Ventas.Migrations
                         new
                         {
                             IdUsuario = 1,
-                            Celular = "987654321",
                             Contrasena = "admin123",
                             Correo = "admin@gmail.com",
                             DNI = "79461382",
                             Direccion = "Cajamarca",
                             IdRol = 1,
-                            NombreCompleto = "Administrador"
+                            NombreUsuario = "Administrador",
+                            Telefono = "987654321"
                         });
                 });
 
