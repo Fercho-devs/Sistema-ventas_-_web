@@ -1,0 +1,72 @@
+﻿@model SistemaWeb_Ventas.ViewModels.LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Iniciar Sesión";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ingresar — Quesito Store</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+        * { font-family: "Segoe UI", sans-serif; }
+        body { background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: #111; border: 1px solid #2a2a2a; border-radius: 12px; width: 100%; max-width: 400px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .form-control { background: #1a1a1a; border: 1px solid #333; color: #fff; }
+        .form-control:focus { background: #1a1a1a; border-color: #e63946; color: #fff; box-shadow: 0 0 0 0.2rem rgba(230,57,70,0.15); }
+        .form-label { color: #aaa; font-size: 0.88rem; font-weight: 600; }
+        .btn-ingresar { background: #e63946; color: #fff; border: none; padding: 11px; font-weight: 700; width: 100%; border-radius: 6px; transition: background 0.2s; }
+        .btn-ingresar:hover { background: #c1121f; color: #fff; }
+        .brand { font-size: 1.5rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-decoration: none; }
+        .brand span { color: #e63946; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="text-center mb-4">
+            <a href="/" class="brand">QUESITO<span>STORE</span></a>
+            <p class="text-muted small mt-2">Ingresa con tu cuenta para continuar</p>
+        </div>
+
+        @if (TempData["MensajeExito"] != null)
+        {
+            <div class="alert alert-success py-2 small text-center">@TempData["MensajeExito"]</div>
+        }
+
+        <form asp-action="Index" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3"></div>
+            
+            <div class="mb-3">
+                <label asp-for="Correo" class="form-label">Correo electrónico</label>
+                <input asp-for="Correo" class="form-control" placeholder="correo@ejemplo.com" autocomplete="email" />
+                <span asp-validation-for="Correo" class="text-danger small"></span>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="Contrasena" class="form-label">Contraseña</label>
+                <input asp-for="Contrasena" class="form-control" placeholder="••••••••" autocomplete="current-password" />
+                <span asp-validation-for="Contrasena" class="text-danger small"></span>
+            </div>
+            
+            <button type="submit" class="btn-ingresar btn">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+            </button>
+        </form>
+        
+        <p class="text-center text-muted small mt-4 mb-0">
+            ¿No tienes cuenta? <a asp-action="Registro" style="color: #e63946; text-decoration: none; font-weight: 600;">Regístrate aquí</a>
+        </p>
+        <p class="text-center mt-3">
+            <a href="/" class="text-muted small text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Volver al inicio</a>
+        </p>
+    </div>
+
+    <!-- Scripts de validación -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
