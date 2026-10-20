@@ -147,9 +147,9 @@ namespace SistemaWeb_Ventas.Controllers
             // Redirigir según el rol.
             return usuario.Rol.NombreRol switch
             {
-                "Administrador" => RedirectToAction("Index", "Home"),
-                "Empleado" => RedirectToAction("Index", "Home"),
-                "Repartidor" => RedirectToAction("Index", "Home"),
+                "Administrador" => RedirectToAction("Administrador", "Welcome"),
+                "Empleado" => RedirectToAction("Empleado", "Welcome"),
+                "Repartidor" => RedirectToAction("Repartidor", "Welcome"),
                 "Cliente" => RedirectToAction("Index", "Home"),
                 _ => RedirectToAction("Index", "Home")
             };

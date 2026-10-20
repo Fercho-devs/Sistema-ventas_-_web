@@ -17,7 +17,6 @@ namespace SistemaWeb_Ventas.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Verificamos si hay una sesión activa usando el ID que guardaste en el LoginController
             var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
 
             if (!string.IsNullOrEmpty(usuarioIdString) && int.TryParse(usuarioIdString, out int idUsuario))

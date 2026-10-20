@@ -14,7 +14,6 @@ namespace SistemaWeb_Ventas.Controllers
         private string? GetRol() => HttpContext.Session.GetString("UsuarioRol");
         private int GetUserId() => int.Parse(HttpContext.Session.GetString("UsuarioId") ?? "0");
 
-        // ── CLIENTE: ver catálogo ────────────────────────────────
         public async Task<IActionResult> Catalogo()
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -23,7 +22,6 @@ namespace SistemaWeb_Ventas.Controllers
             return View(productos);
         }
 
-        // ── CLIENTE: agregar al carrito ──────────────────────────
         [HttpPost]
         public async Task<IActionResult> AgregarCarrito(int idProducto, int cantidad)
         {
@@ -66,7 +64,6 @@ namespace SistemaWeb_Ventas.Controllers
             return Json(new { ok = true, mensaje = "Se agregó correctamente al carrito.", restante });
         }
 
-        // ── CLIENTE: actualizar cantidad de un producto en el carrito ──
         [HttpPost]
         public async Task<IActionResult> ActualizarCantidadCarrito(int idDetalle, int cantidad)
         {
@@ -93,7 +90,6 @@ namespace SistemaWeb_Ventas.Controllers
             return RedirectToAction(nameof(Carrito));
         }
 
-        // ── CLIENTE: quitar un producto del carrito ──────────────
         [HttpPost]
         public async Task<IActionResult> EliminarDelCarrito(int idDetalle)
         {
@@ -109,7 +105,6 @@ namespace SistemaWeb_Ventas.Controllers
             return RedirectToAction(nameof(Carrito));
         }
 
-        // ── CLIENTE: ver carrito ─────────────────────────────────
         public async Task<IActionResult> Carrito()
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -121,7 +116,6 @@ namespace SistemaWeb_Ventas.Controllers
             return View(carrito);
         }
 
-        // ── CLIENTE: confirmar pedido ────────────────────────────
         [HttpPost]
         public async Task<IActionResult> ConfirmarPedido(int idTipoEntrega, string? direccionDestino)
         {
@@ -163,7 +157,6 @@ namespace SistemaWeb_Ventas.Controllers
                 d.Producto.Stock -= d.Cantidad;
             }
 
-            // Crear registro de entrega
             var entrega = new Entrega { IdPedido = pedido.IdPedido, DireccionDestino = direccionDestino };
             _db.Entregas.Add(entrega);
 
@@ -173,7 +166,6 @@ namespace SistemaWeb_Ventas.Controllers
             return RedirectToAction(nameof(MisPedidos));
         }
 
-        // ── CLIENTE: mis pedidos / seguimiento ──────────────────
         public async Task<IActionResult> MisPedidos()
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -185,7 +177,6 @@ namespace SistemaWeb_Ventas.Controllers
             return View(pedidos);
         }
 
-        // ── ADMIN: todos los pedidos ─────────────────────────────
         public async Task<IActionResult> Index()
         {
             if (GetRol() != "Administrador") return RedirectToAction("Index", "Login");
@@ -196,7 +187,6 @@ namespace SistemaWeb_Ventas.Controllers
             return View(pedidos);
         }
 
-        // ── ADMIN: aprobar pedido ────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> Aprobar(int id)
         {

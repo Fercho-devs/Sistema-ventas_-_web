@@ -1,0 +1,101 @@
+﻿@{
+    Layout = null;
+    var nombre = ViewBag.Nombre as string;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Panel Admin — Quesito Store</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+        
+        /* NAVBAR */
+        .navbar { background: transparent; padding: 20px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 40px;}
+        .navbar-brand { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 2rem; color: #fff !important; letter-spacing: 1px; text-decoration: none;}
+        .navbar-brand span { color: #e63946; }
+        
+        /* BOTONES */
+        .btn-pill-white { background: #fff; color: #000; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; border: none; transition: all 0.3s; text-decoration: none; }
+        .btn-pill-white:hover { background: #e0e0e0; color: #000; }
+        .btn-pill-outline { background: transparent; color: #fff; border: 1px solid #444; border-radius: 50px; padding: 8px 20px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;}
+        .btn-pill-outline:hover { border-color: #fff; color: #fff; }
+
+        /* TARJETAS DEL MENÚ */
+        .menu-card { 
+            background: #111; 
+            border: 1px solid #222; 
+            border-radius: 16px; 
+            padding: 2rem; 
+            text-decoration: none; 
+            color: #fff; 
+            display: block; 
+            transition: all 0.3s; 
+            height: 100%;
+        }
+        .menu-card:hover { 
+            border-color: #e63946; 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(230, 57, 70, 0.1);
+            color: #fff;
+        }
+        .menu-icon { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.8rem; 
+            margin-bottom: 1.5rem; 
+            background: #1a1a1a;
+            border: 1px solid #333;
+            transition: all 0.3s;
+        }
+        .menu-card:hover .menu-icon { background: #e63946; color: #fff; border-color: #e63946; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">QUESITO<span>.</span> <small class="fw-normal text-muted ms-2" style="font-size:0.9rem; font-family:'Inter',sans-serif; letter-spacing:0;">Admin</small></a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small d-none d-md-block"><i class="bi bi-person-circle me-1" style="color:#e63946;"></i>@nombre</span>
+                <form asp-controller="Login" asp-action="Salir" method="post" class="d-inline m-0 p-0">
+                    <button type="submit" class="btn btn-pill-white">Salir <i class="bi bi-box-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="mb-5">
+            <p class="text-uppercase mb-1" style="color:#e63946; font-size:.8rem; font-weight:600; letter-spacing:3px;">Panel de control</p>
+            <h2 class="fw-bold m-0">Bienvenido/a, @nombre</h2>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <a asp-controller="Pedido" asp-action="Index" class="menu-card">
+                    <div class="menu-icon" style="color:#e63946;"><i class="bi bi-bag-check"></i></div>
+                    <h4 class="fw-bold mb-2">Pedidos</h4>
+                    <p class="text-muted small m-0">Aprobar, revisar y gestionar el estado de los pedidos de los clientes.</p>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-controller="Producto" asp-action="Index" class="menu-card">
+                    <div class="menu-icon" style="color:#e63946;"><i class="bi bi-grid"></i></div>
+                    <h4 class="fw-bold mb-2">Productos</h4>
+                    <p class="text-muted small m-0">Administrar el catálogo, actualizar stock, precios y añadir prendas.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
