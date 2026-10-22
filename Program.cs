@@ -27,7 +27,7 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
@@ -59,6 +59,10 @@ var app = builder.Build();
 // Configurar el manejo de errores en producción
 if (!app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage(); // Esto muestra errores detallados
+}
+else
+{ 
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }

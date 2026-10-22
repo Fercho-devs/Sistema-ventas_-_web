@@ -177,6 +177,14 @@
                             <!-- Detalles -->
                             <div class="cart-details">
                                 <div class="cart-title">@d.Producto?.Nombre</div>
+                                @if (!string.IsNullOrEmpty(d.TallaSeleccionada))
+                                {
+                                    <div class="mb-2">
+                                        <span class="badge bg-dark border border-secondary text-light">
+                                            <i class="bi bi-rulers me-1"></i> Talla: @d.TallaSeleccionada
+                                        </span>
+                                    </div>
+                                }
                                 <div class="cart-price">S/ @d.Producto?.Precio.ToString("0.00") c/u</div>
                                 
                                 <!-- Formulario para cambiar cantidad -->
@@ -230,10 +238,28 @@
                                     <option value="">-- Seleccionar --</option>
                                 </select>
                             </div>
-                            
+
+                            <!-- Dirección para envío a domicilio (IdTipoEntrega = 2) -->
                             <div class="mb-4" id="divDireccion" style="display:none">
                                 <label class="form-label">Dirección de entrega</label>
                                 <input type="text" name="direccionDestino" id="direccionDestino" class="form-control form-control-dark" placeholder="Ej. Jr. Lima 123, Cajamarca" />
+                            </div>
+
+                            <!-- Campos para envío a otra ciudad (IdTipoEntrega = 3) -->
+                            <div class="mb-4" id="divOtraCiudad" style="display:none">
+                                <div class="p-3" style="background: #1a1a1a; border-radius: 12px; border: 1px solid #333;">
+                                    <h6 class="text-white mb-3"><i class="bi bi-geo-alt-fill me-2" style="color: #e63946;"></i>Dirección de Envío</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Ciudad <span class="text-danger">*</span></label>
+                                            <input type="text" name="ciudadDestino" id="ciudadDestino" class="form-control form-control-dark" placeholder="Ej: Lima, Arequipa, Cusco" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Jirón / Dirección <span class="text-danger">*</span></label>
+                                            <input type="text" name="jironDestino" id="jironDestino" class="form-control form-control-dark" placeholder="Ej: Jr. Los Pinos 123" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-pill-white w-100 justify-content-center py-3">
@@ -249,31 +275,74 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function toggleDireccion(sel) {
-            var divDir = document.getElementById('divDireccion');
-            if (parseInt(sel.value) > 1) {
-                divDir.style.display = 'block';
-            } else {
-                divDir.style.display = 'none';
-                document.getElementById('direccionDestino').value = ''; // Limpiar por si acaso
-            }
-        }
+            function toggleDireccion(sel) {
+                var divDir = document.getElementById('divDireccion');
+                var divOtraCiudad = document.getElementById('divOtraCiudad');
+                var direccionInput = document.getElementById('direccionDestino');
+                var ciudadInput = document.getElementById('ciudadDestino');
+                var jironInput = document.getElementById('jironDestino');
 
-        function validarPedido() {
-            var tipo = document.getElementById('tipoEntrega').value;
-            if (!tipo) {
-                alert('Por favor seleccione el tipo de entrega.');
-                return false;
-            }
-            if (parseInt(tipo) > 1) {
-                var dir = document.getElementById('direccionDestino').value.trim();
-                if (!dir) {
-                    alert('Por favor ingrese la dirección de entrega.');
-                    return false;
+                var valor = parseInt(sel.value);
+
+                if (valor === 2) {
+                    // Envío a domicilio: solo dirección
+                    divDir.style.display = 'block';
+                    divOtraCiudad.style.display = 'none';
+                    direccionInput.removeAttribute('required');
+                    ciudadInput.removeAttribute('required');
+                    jironInput.removeAttribute('required');
+                    ciudadInput.value = '';
+                    jironInput.value = '';
+                } else if (valor === 3) {
+                    // Envío a otra ciudad: ciudad + jirón
+                    divDir.style.display = 'none';
+                    divOtraCiudad.style.display = 'block';
+                    direccionInput.value = '';
+                    direccionInput.removeAttribute('required');
+                    ciudadInput.setAttribute('required', 'required');
+                    jironInput.setAttribute('required', 'required');
+                } else {
+                    // Recojo en tienda: nada
+                    divDir.style.display = 'none';
+                    divOtraCiudad.style.display = 'none';
+                    direccionInput.value = '';
+                    ciudadInput.value = '';
+                    jironInput.value = '';
+                    direccionInput.removeAttribute('required');
+                    ciudadInput.removeAttribute('required');
+                    jironInput.removeAttribute('required');
                 }
             }
-            return true;
-        }
+
+            function validarPedido() {
+                var tipo = document.getElementById('tipoEntrega').value;
+                if (!tipo) {
+                    alert('Por favor seleccione el tipo de entrega.');
+                    return false;
+                }
+                var valor = parseInt(tipo);
+                if (valor === 2) {
+                    var dir = document.getElementById('direccionDestino').value.trim();
+                    if (!dir) {
+                        alert('Por favor ingrese la dirección de entrega.');
+                        return false;
+                    }
+                } else if (valor === 3) {
+                    var ciudad = document.getElementById('ciudadDestino').value.trim();
+                    var jiron = document.getElementById('jironDestino').value.trim();
+                    if (!ciudad) {
+                        alert('Por favor ingrese la ciudad de destino.');
+                        document.getElementById('ciudadDestino').focus();
+                        return false;
+                    }
+                    if (!jiron) {
+                        alert('Por favor ingrese el jirón o dirección.');
+                        document.getElementById('jironDestino').focus();
+                        return false;
+                    }
+                }
+                return true;
+            }
     </script>
 </body>
 </html>

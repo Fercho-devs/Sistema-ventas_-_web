@@ -149,12 +149,30 @@
                             </div>
 
                             <!-- Formulario agregar al carrito -->
-                            <form class="form-agregar" data-stock="@p.Stock">
+                            <form class="form-agregar" data-stock="@p.Stock" data-tallas="@p.Talla">
                                 <input type="hidden" name="idProducto" value="@p.IdProducto" />
-                                <input type="number" name="cantidad" value="1" min="1" max="@p.Stock" class="form-control form-control-dark form-control-sm" style="width: 70px;" />
-                                <button type="submit" class="btn btn-add-cart w-100 btn-sm">
-                                    <i class="bi bi-bag-plus me-2"></i> Agregar
-                                </button>
+
+                                <!-- Selector de Talla -->
+                                <div class="mb-2">
+                                    <select name="tallaSeleccionada" class="form-select form-select-dark form-select-sm" required>
+                                        <option value="">-- Seleccionar Talla --</option>
+                                        @{
+                                            var tallas = (p.Talla ?? "").Split(',').Select(t => t.Trim()).Where(t => t != "");
+                                            foreach (var talla in tallas)
+                                            {
+                                                <option value="@talla">@talla</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Cantidad -->
+                                <div class="d-flex gap-2">
+                                    <input type="number" name="cantidad" value="1" min="1" max="@p.Stock" class="form-control form-control-dark form-control-sm" style="width: 70px;" />
+                                    <button type="submit" class="btn btn-add-cart btn-sm flex-grow-1">
+                                        <i class="bi bi-bag-plus me-1"></i> Agregar
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -213,11 +231,20 @@
                 btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
                 btnSubmit.disabled = true;
 
-                fetch('@Url.Action("AgregarCarrito")', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'idProducto=' + idProducto + '&cantidad=' + cantidad
-                })
+                    var tallaSelect = form.querySelector('select[name=tallaSeleccionada]');
+                    var tallaSeleccionada = tallaSelect.value;
+
+                    if (!tallaSeleccionada) {
+                        alert('Por favor selecciona una talla.');
+                        tallaSelect.focus();
+                        return;
+                    }
+
+                    fetch('@Url.Action("AgregarCarrito")', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'idProducto=' + idProducto + '&cantidad=' + cantidad + '&tallaSeleccionada=' + encodeURIComponent(tallaSeleccionada)
+                    })
                 .then(r => r.json())
                 .then(data => {
                     alert(data.mensaje);

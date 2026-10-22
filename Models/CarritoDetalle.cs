@@ -12,6 +12,9 @@ namespace SistemaWeb_Ventas.Models
         [Required]
         public int Cantidad { get; set; }
 
+        [StringLength(50)]
+        public string? TallaSeleccionada { get; set; }
+
         // FK Carrito
         public int IdCarrito { get; set; }
         [ForeignKey("IdCarrito")]

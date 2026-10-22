@@ -12,25 +12,88 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
     <style>
-        * { font-family: "Segoe UI", sans-serif; }
-        body { background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 0; }
-        .login-card { background: #111; border: 1px solid #2a2a2a; border-radius: 12px; width: 100%; max-width: 480px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .form-control, .form-select { background: #1a1a1a; border: 1px solid #333; color: #fff; }
-        .form-control:focus, .form-select:focus { background: #1a1a1a; border-color: #e63946; color: #fff; box-shadow: 0 0 0 0.2rem rgba(230,57,70,0.15); }
-        .form-label { color: #aaa; font-size: 0.88rem; font-weight: 600; }
-        .btn-registrar { background: #e63946; color: #fff; border: none; padding: 11px; font-weight: 700; width: 100%; border-radius: 6px; transition: background 0.2s; }
-        .btn-registrar:hover { background: #c1121f; color: #fff; }
-        .brand { font-size: 1.5rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-decoration: none; }
-        .brand span { color: #e63946; }
+            * {
+                font-family: "Segoe UI", sans-serif;
+            }
+
+            body {
+                background: #0a0a0a;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem 0;
+            }
+
+            .login-card {
+                background: #111;
+                border: 1px solid #2a2a2a;
+                border-radius: 12px;
+                width: 100%;
+                max-width: 480px;
+                padding: 2.5rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            }
+
+            .form-control, .form-select {
+                background: #1a1a1a;
+                border: 1px solid #333;
+                color: #fff;
+            }
+
+                .form-control:focus, .form-select:focus {
+                    background: #1a1a1a;
+                    border-color: #e63946;
+                    color: #fff;
+                    box-shadow: 0 0 0 0.2rem rgba(230,57,70,0.15);
+                }
+
+            .form-label {
+                color: #aaa;
+                font-size: 0.88rem;
+                font-weight: 600;
+            }
+
+            .btn-registrar {
+                background: #e63946;
+                color: #fff;
+                border: none;
+                padding: 11px;
+                font-weight: 700;
+                width: 100%;
+                border-radius: 6px;
+                transition: background 0.2s;
+            }
+
+                .btn-registrar:hover {
+                    background: #c1121f;
+                    color: #fff;
+                }
+
+            .brand {
+                font-size: 1.5rem;
+                font-weight: 900;
+                letter-spacing: 2px;
+                color: #fff;
+                text-decoration: none;
+            }
+
+                .brand span {
+                    color: #e63946;
+                }
+
+            .form-select option {
+                background: #111;
+                color: #fff;
+            }
     </style>
 </head>
 <body>
     <div class="login-card">
         <div class="text-center mb-4">
             <a href="/" class="brand">QUESITO<span>STORE</span></a>
-            <p class="text-muted small mt-2">Crea tu cuenta de cliente</p>
+            <p class="text-muted small mt-2">Crea tu cuenta</p>
         </div>
-
         <form asp-action="Registro" method="post">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3"></div>
 
@@ -47,7 +110,7 @@
                     <span asp-validation-for="DNI" class="text-danger small"></span>
                 </div>
                 <div class="col-6 mb-3">
-                    <label asp-for="Telefono" class="form-label">Telefono</label>
+                    <label asp-for="Telefono" class="form-label">Teléfono</label>
                     <input asp-for="Telefono" class="form-control" maxlength="15" />
                     <span asp-validation-for="Telefono" class="text-danger small"></span>
                 </div>
@@ -77,19 +140,22 @@
                 </div>
             </div>
 
-            <!-- Campo oculto para asegurar que siempre se registre como Cliente (IdRol = 4) -->
-            <input type="hidden" asp-for="IdRol" value="4" />
+            <div class="mb-3">
+                <label asp-for="IdRol" class="form-label">Tipo de cuenta</label>
+                <select asp-for="IdRol" asp-items="@(new SelectList(Model.Roles, "IdRol", "NombreRol"))" class="form-select">
+                    <option value="">-- Selecciona un rol --</option>
+                </select>
+                <span asp-validation-for="IdRol" class="text-danger small"></span>
+            </div>
 
             <button type="submit" class="btn-registrar btn mt-2">
                 <i class="bi bi-person-plus me-2"></i>Registrarse
             </button>
         </form>
-
         <p class="text-center text-muted small mt-4 mb-0">
             ¿Ya tienes cuenta? <a asp-action="LogIn" style="color: #e63946; text-decoration: none; font-weight: 600;">Inicia sesión</a>
         </p>
     </div>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

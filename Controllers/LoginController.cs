@@ -162,59 +162,44 @@ namespace SistemaWeb_Ventas.Controllers
         {
             var vm = new UsuarioVM
             {
-                Roles = await _db.Roles
-                    .Where(r => r.NombreRol == "Cliente")
-                    .ToListAsync()
+                Roles = await _db.Roles.ToListAsync() // Cargar TODOS los roles
             };
-
             return View(vm);
         }
 
-        // POST: Registrar un nuevo cliente
+        // POST: Registrar un nuevo usuario
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Registro(
-            UsuarioVM model)
+        public async Task<IActionResult> Registro(UsuarioVM model)
         {
-            // Cargar los roles que se muestran en el formulario.
-            model.Roles = await _db.Roles
-                .Where(r => r.NombreRol == "Cliente")
-                .ToListAsync();
+            // Cargar los roles que se muestran en el formulario
+            model.Roles = await _db.Roles.ToListAsync();
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // Verificar que el rol Cliente exista en la base de datos.
-            var rolCliente = await _db.Roles
-                .FirstOrDefaultAsync(r => r.NombreRol == "Cliente");
+            // Verificar que el rol exista en la base de datos
+            var rolSeleccionado = await _db.Roles
+                .FirstOrDefaultAsync(r => r.IdRol == model.IdRol);
 
-            if (rolCliente == null)
+            if (rolSeleccionado == null)
             {
-                ModelState.AddModelError(
-                    "",
-                    "No está disponible el registro de clientes.");
-
+                ModelState.AddModelError("IdRol", "El rol seleccionado no es válido.");
                 return View(model);
             }
 
-            // No confiar en el IdRol enviado por el navegador.
-            // Asignar siempre el rol Cliente desde el servidor.
             var correo = model.Correo.Trim().ToLower();
 
-            // Comprobar si el correo ya está registrado.
-            if (await _db.Usuarios.AnyAsync(u =>
-                u.Correo.ToLower() == correo))
+            // Comprobar si el correo ya está registrado
+            if (await _db.Usuarios.AnyAsync(u => u.Correo.ToLower() == correo))
             {
-                ModelState.AddModelError(
-                    "Correo",
-                    "Ya existe una cuenta registrada con este correo.");
-
+                ModelState.AddModelError("Correo", "Ya existe una cuenta registrada con este correo.");
                 return View(model);
             }
 
-            // Crear el usuario sin guardar la contraseña en texto plano.
+            // Crear el usuario con el rol seleccionado
             var nuevoUsuario = new Usuario
             {
                 NombreUsuario = model.NombreUsuario,
@@ -222,21 +207,16 @@ namespace SistemaWeb_Ventas.Controllers
                 Telefono = model.Telefono,
                 Direccion = model.Direccion,
                 Correo = model.Correo.Trim(),
-                IdRol = rolCliente.IdRol
+                IdRol = rolSeleccionado.IdRol
             };
 
-            // Generar un hash seguro para la contraseña.
-            nuevoUsuario.Contrasena =
-                _passwordHasher.HashPassword(
-                    nuevoUsuario,
-                    model.Contrasena);
+            // Generar un hash seguro para la contraseña
+            nuevoUsuario.Contrasena = _passwordHasher.HashPassword(nuevoUsuario, model.Contrasena);
 
             _db.Usuarios.Add(nuevoUsuario);
             await _db.SaveChangesAsync();
 
-            TempData["MensajeExito"] =
-                "Cuenta creada exitosamente. Ahora puedes iniciar sesión.";
-
+            TempData["MensajeExito"] = "Cuenta creada exitosamente. Ahora puedes iniciar sesión.";
             return RedirectToAction(nameof(LogIn));
         }
 

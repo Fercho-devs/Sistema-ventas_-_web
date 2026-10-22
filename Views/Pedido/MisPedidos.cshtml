@@ -38,6 +38,7 @@
         .status-aprobado { background: rgba(13, 202, 240, 0.15); color: #0dcaf0; border: 1px solid rgba(13, 202, 240, 0.3); }
         .status-cancelado { background: rgba(220, 53, 69, 0.15); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.3); }
         .status-finalizado { background: rgba(25, 135, 84, 0.15); color: #198754; border: 1px solid rgba(25, 135, 84, 0.3); }
+        .status-despacho { background: rgba(108, 117, 125, 0.15); color: #6c757d; border: 1px solid rgba(108, 117, 125, 0.3); }
         
         /* TIMELINE DE SEGUIMIENTO */
         .timeline { list-style: none; padding-left: 0; margin-top: 15px; border-left: 2px solid #333; margin-left: 10px; }
@@ -116,6 +117,21 @@
                             <div class="col-md-5 mb-4 mb-md-0">
                                 <p class="text-muted small mb-1">Tipo de Entrega</p>
                                 <p class="fw-bold mb-3"><i class="bi bi-truck me-2 text-white-50"></i>@p.TipoEntrega?.Nombre</p>
+
+                                @if (p.Entrega != null)
+                                {
+                                    @if (!string.IsNullOrEmpty(p.Entrega.CiudadDestino) && p.Entrega.CiudadDestino != "Cajamarca")
+                                    {
+                                        <p class="text-muted small mb-1 mt-3">Ciudad de destino</p>
+                                        <p class="fw-bold mb-2"><i class="bi bi-geo-alt me-2 text-white-50"></i>@p.Entrega.CiudadDestino</p>
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(p.Entrega.DireccionDestino) && p.TipoEntrega?.IdTipoEntrega != 1)
+                                    {
+                                        <p class="text-muted small mb-1">Dirección / Jirón</p>
+                                        <p class="fw-bold mb-0"><i class="bi bi-signpost-2 me-2 text-white-50"></i>@p.Entrega.DireccionDestino</p>
+                                    }
+                                }
 
                                 <p class="text-muted small mb-1">Estado del Pago</p>
                                 <p class="mb-3">

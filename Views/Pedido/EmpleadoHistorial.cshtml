@@ -1,0 +1,310 @@
+﻿@{
+    Layout = null;
+    var pedidosAgrupados = ViewBag.PedidosAgrupados as Dictionary<string, List<SistemaWeb_Ventas.Models.Pedido>>;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Historial de Pedidos — Empleado</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+            body {
+                background: #0a0a0a;
+                color: #fff;
+                font-family: 'Inter', sans-serif;
+                min-height: 100vh;
+            }
+
+            .navbar {
+                background: transparent;
+                padding: 20px 0;
+                border-bottom: 1px solid #1a1a1a;
+                margin-bottom: 30px;
+            }
+
+            .navbar-brand {
+                font-family: 'Playfair Display', serif;
+                font-weight: 600;
+                font-size: 2rem;
+                color: #fff !important;
+                letter-spacing: 1px;
+                text-decoration: none;
+            }
+
+                .navbar-brand span {
+                    color: #e63946;
+                }
+
+            .btn-pill-white {
+                background: #fff;
+                color: #000;
+                border-radius: 50px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                border: none;
+                transition: all 0.3s;
+                text-decoration: none;
+            }
+
+                .btn-pill-white:hover {
+                    background: #e0e0e0;
+                    color: #000;
+                }
+
+            .btn-pill-outline {
+                background: transparent;
+                color: #fff;
+                border: 1px solid #444;
+                border-radius: 50px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .btn-pill-outline:hover {
+                    border-color: #fff;
+                    color: #fff;
+                }
+
+            .cliente-section {
+                margin-bottom: 40px;
+            }
+
+            .cliente-header {
+                background: #151515;
+                border-left: 4px solid #e63946;
+                padding: 15px 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .cliente-header h4 {
+                    margin: 0;
+                    font-weight: 700;
+                }
+
+            .history-card {
+                background: #111;
+                border: 1px solid #222;
+                border-radius: 16px;
+                margin-bottom: 20px;
+                overflow: hidden;
+            }
+
+            .history-header {
+                background: #1a1a1a;
+                border-bottom: 1px solid #222;
+                padding: 15px 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .history-body {
+                padding: 20px;
+            }
+
+            .status-finalizado {
+                background: rgba(25, 135, 84, 0.15);
+                color: #198754;
+                border: 1px solid rgba(25, 135, 84, 0.3);
+                padding: 6px 12px;
+                border-radius: 50px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .status-cancelado {
+                background: rgba(220, 53, 69, 0.15);
+                color: #dc3545;
+                border: 1px solid rgba(220, 53, 69, 0.3);
+                padding: 6px 12px;
+                border-radius: 50px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .timeline {
+                list-style: none;
+                padding-left: 0;
+                margin-top: 15px;
+                border-left: 2px solid #333;
+                margin-left: 10px;
+            }
+
+                .timeline li {
+                    position: relative;
+                    padding-left: 25px;
+                    margin-bottom: 15px;
+                    font-size: 0.9rem;
+                    color: #aaa;
+                }
+
+                    .timeline li::before {
+                        content: '';
+                        position: absolute;
+                        left: -6px;
+                        top: 4px;
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 50%;
+                        background: #555;
+                        border: 2px solid #111;
+                    }
+
+                    .timeline li.active::before {
+                        background: #e63946;
+                        box-shadow: 0 0 10px rgba(230,57,70,0.5);
+                    }
+
+                    .timeline li.active {
+                        color: #fff;
+                    }
+
+            .producto-tag {
+                background: #1a1a1a;
+                border: 1px solid #333;
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-size: 0.8rem;
+                color: #aaa;
+                display: inline-block;
+                margin: 2px;
+            }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">QUESITO<span>.</span> <small class="fw-normal text-muted ms-2" style="font-size:0.9rem; font-family:'Inter',sans-serif; letter-spacing:0;">Empleado - Historial</small></a>
+            <div class="d-flex gap-2">
+                <a asp-controller="Welcome" asp-action="Empleado" class="btn btn-pill-outline"><i class="bi bi-arrow-left me-1"></i> Volver al Panel</a>
+                <a asp-action="EmpleadoPedidos" class="btn btn-pill-outline"><i class="bi bi-bag me-1"></i> Pedidos Activos</a>
+                <form asp-controller="Login" asp-action="Salir" method="post" class="d-inline m-0 p-0">
+                    <button type="submit" class="btn btn-pill-white">Salir <i class="bi bi-box-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center mb-4 gap-3">
+            <i class="bi bi-clock-history text-danger fs-3"></i>
+            <h3 class="fw-bold m-0">Historial de Pedidos</h3>
+        </div>
+
+        @if (pedidosAgrupados == null || !pedidosAgrupados.Any())
+        {
+            <div class="text-center py-5" style="background:#111; border-radius:16px; border:1px solid #222;">
+                <i class="bi bi-inbox mb-3 d-block" style="font-size:3rem; color:#444;"></i>
+                <h5 class="text-white">No hay pedidos en el historial</h5>
+                <p class="text-muted">Los pedidos finalizados o cancelados aparecerán aquí.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var grupo in pedidosAgrupados)
+            {
+                <div class="cliente-section">
+                    <div class="cliente-header">
+                        <div>
+                            <h4><i class="bi bi-person-circle me-2" style="color:#e63946;"></i>@grupo.Key</h4>
+                            <p class="text-muted small mb-0 mt-1">@grupo.Value.Count pedido(s)</p>
+                        </div>
+                    </div>
+
+                    @foreach (var p in grupo.Value)
+                    {
+                        <div class="history-card">
+                            <div class="history-header">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="fw-bold fs-5">Pedido #@p.IdPedido</span>
+                                    <span class="text-muted small"><i class="bi bi-calendar3 me-1"></i> @p.FechaPedido.ToString("dd MMM, yyyy HH:mm")</span>
+                                </div>
+                                <div>
+                                    @if (p.EstadoPedido == "Finalizado")
+                                    {
+                                        <span class="status-finalizado"><i class="bi bi-check-circle-fill me-1"></i> Finalizado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-cancelado"><i class="bi bi-x-circle-fill me-1"></i> Cancelado</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="history-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <p class="text-muted small mb-1">Tipo de Entrega</p>
+                                        <p class="fw-bold mb-0"><i class="bi bi-truck me-2 text-white-50"></i>@p.TipoEntrega?.Nombre</p>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <p class="text-muted small mb-1">Total</p>
+                                        <h4 class="fw-bold m-0" style="color: #e63946;">S/ @p.Total.ToString("0.00")</h4>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <p class="text-muted small mb-1">Estado del Pago</p>
+                                        <p class="fw-bold mb-0">
+                                            @if (p.EstadoPago == "Pagado")
+                                            {
+                                                <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> Pagado</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-warning"><i class="bi bi-clock-fill me-1"></i> Pendiente</span>
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <p class="text-muted small mb-2"><i class="bi bi-box-seam me-1"></i> Productos</p>
+                                    <div>
+                                        @foreach (var d in p.Detalles)
+                                        {
+                                            <span class="producto-tag">@d.Producto?.Nombre (x@d.Cantidad)</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                @if (p.Entrega?.EstadosEntrega?.Any() == true)
+                                {
+                                    <div class="mt-4">
+                                        <p class="text-muted small mb-2"><i class="bi bi-clock-history me-1"></i> Historial de Estados</p>
+                                        <ul class="timeline">
+                                            @foreach (var e in p.Entrega.EstadosEntrega.OrderByDescending(x => x.FechaHora))
+                                            {
+                                                <li class="active">
+                                                    <span class="fw-bold text-white d-block">@e.Estado</span>
+                                                    <span class="text-muted" style="font-size: 0.8rem;">@e.FechaHora.ToString("dd/MM/yyyy HH:mm")</span>
+                                                    @if (!string.IsNullOrEmpty(e.Observacion))
+                                                    {
+                                                        <span class="d-block text-white-50 small mt-1">@e.Observacion</span>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>

@@ -1,0 +1,325 @@
+﻿@model IEnumerable<SistemaWeb_Ventas.Models.Pedido>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pedidos Activos — Empleado</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+            body {
+                background: #0a0a0a;
+                color: #fff;
+                font-family: 'Inter', sans-serif;
+                min-height: 100vh;
+            }
+
+            .navbar {
+                background: transparent;
+                padding: 20px 0;
+                border-bottom: 1px solid #1a1a1a;
+                margin-bottom: 30px;
+            }
+
+            .navbar-brand {
+                font-family: 'Playfair Display', serif;
+                font-weight: 600;
+                font-size: 2rem;
+                color: #fff !important;
+                letter-spacing: 1px;
+                text-decoration: none;
+            }
+
+                .navbar-brand span {
+                    color: #e63946;
+                }
+
+            .btn-pill-white {
+                background: #fff;
+                color: #000;
+                border-radius: 50px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                border: none;
+                transition: all 0.3s;
+                text-decoration: none;
+            }
+
+                .btn-pill-white:hover {
+                    background: #e0e0e0;
+                    color: #000;
+                }
+
+            .btn-pill-outline {
+                background: transparent;
+                color: #fff;
+                border: 1px solid #444;
+                border-radius: 50px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .btn-pill-outline:hover {
+                    border-color: #fff;
+                    color: #fff;
+                }
+
+            .table-dark-custom {
+                background: #111;
+                border: 1px solid #222;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+                .table-dark-custom thead {
+                    background: #1a1a1a;
+                    color: #aaa;
+                    font-size: 0.8rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+
+                .table-dark-custom th, .table-dark-custom td {
+                    border-color: #222;
+                    vertical-align: middle;
+                }
+
+                .table-dark-custom tbody tr:hover {
+                    background: #151515;
+                }
+
+            .status-badge {
+                padding: 6px 12px;
+                border-radius: 50px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                display: inline-block;
+            }
+
+            .status-pendiente {
+                background: rgba(255, 193, 7, 0.15);
+                color: #ffc107;
+                border: 1px solid rgba(255, 193, 7, 0.3);
+            }
+
+            .status-aprobado {
+                background: rgba(13, 202, 240, 0.15);
+                color: #0dcaf0;
+                border: 1px solid rgba(13, 202, 240, 0.3);
+            }
+
+            .status-despacho {
+                background: rgba(108, 117, 125, 0.15);
+                color: #6c757d;
+                border: 1px solid rgba(108, 117, 125, 0.3);
+            }
+
+            .status-pago-pagado {
+                background: rgba(25, 135, 84, 0.15);
+                color: #198754;
+                border: 1px solid rgba(25, 135, 84, 0.3);
+            }
+
+            .status-pago-pendiente {
+                background: rgba(255, 193, 7, 0.15);
+                color: #ffc107;
+                border: 1px solid rgba(255, 193, 7, 0.3);
+            }
+
+            .btn-action {
+                width: 34px;
+                height: 34px;
+                padding: 0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                border: 1px solid #333;
+                background: #1a1a1a;
+                color: #aaa;
+                transition: 0.3s;
+                margin: 0 2px;
+            }
+
+                .btn-action:hover {
+                    background: #333;
+                    color: #fff;
+                }
+
+                .btn-action.pay:hover {
+                    border-color: #198754;
+                    color: #198754;
+                }
+
+                .btn-action.ship:hover {
+                    border-color: #0dcaf0;
+                    color: #0dcaf0;
+                }
+
+                .btn-action.deliver:hover {
+                    border-color: #ffc107;
+                    color: #ffc107;
+                }
+
+                .btn-action.cancel:hover {
+                    border-color: #dc3545;
+                    color: #dc3545;
+                }
+
+            .productos-list {
+                font-size: 0.85rem;
+                color: #aaa;
+                max-width: 200px;
+            }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">QUESITO<span>.</span> <small class="fw-normal text-muted ms-2" style="font-size:0.9rem; font-family:'Inter',sans-serif; letter-spacing:0;">Empleado - Pedidos</small></a>
+            <div class="d-flex gap-2">
+                <a asp-controller="Welcome" asp-action="Empleado" class="btn btn-pill-outline"><i class="bi bi-arrow-left me-1"></i> Volver al Panel</a>
+                <a asp-action="EmpleadoHistorial" class="btn btn-pill-outline"><i class="bi bi-clock-history me-1"></i> Historial</a>
+                <form asp-controller="Login" asp-action="Salir" method="post" class="d-inline m-0 p-0">
+                    <button type="submit" class="btn btn-pill-white">Salir <i class="bi bi-box-arrow-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        @if (TempData["MensajeExito"] != null)
+        {
+            <div class="alert alert-success py-2 small" style="background:rgba(25,135,84,.1); border-color:rgba(25,135,84,.3); color:#198754;">
+                <i class="bi bi-check-circle-fill me-2"></i>@TempData["MensajeExito"]
+            </div>
+        }
+
+        <div class="d-flex align-items-center mb-4 gap-3">
+            <i class="bi bi-bag-check text-danger fs-3"></i>
+            <h3 class="fw-bold m-0">Pedidos Activos</h3>
+            <span class="badge bg-secondary">@Model.Count() pedidos</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark-custom align-middle">
+                <thead>
+                    <tr>
+                        <th class="ps-3">#</th>
+                        <th>Cliente</th>
+                        <th>Productos</th>
+                        <th>Entrega</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Pago</th>
+                        <th>Fecha</th>
+                        <th class="text-center pe-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td class="ps-3 fw-bold text-white">#@p.IdPedido</td>
+                            <td>@p.Cliente?.NombreUsuario</td>
+                            <td class="productos-list">
+                                @foreach (var d in p.Detalles.Take(2))
+                                {
+                                    <div class="mb-1">
+                                        @d.Producto?.Nombre (x@d.Cantidad)
+
+                                        @* ✅ AQUÍ SE MUESTRA LA TALLA SELECCIONADA *@
+                                        @if (!string.IsNullOrEmpty(d.TallaSeleccionada))
+                                        {
+                                            <span class="badge ms-1" style="background: rgba(230, 57, 70, 0.15); color: #e63946; font-size: 0.7rem;">
+                                                @d.TallaSeleccionada
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                @if (p.Detalles.Count > 2)
+                                {
+                                    <div class="text-muted">+@(p.Detalles.Count - 2) más...</div>
+                                }
+                            </td>
+                            <td><span class="badge bg-dark border border-secondary text-light">@p.TipoEntrega?.Nombre</span></td>
+                            <td class="fw-bold" style="color:#e63946;">S/ @p.Total.ToString("0.00")</td>
+                            <td>
+                                @{
+                                    var statusClass = p.EstadoPedido switch
+                                    {
+                                        "Pendiente" => "status-pendiente",
+                                        "Aprobado" => "status-aprobado",
+                                        "En despacho" => "status-despacho",
+                                        _ => "status-aprobado"
+                                    };
+                                }
+                                <span class="status-badge @statusClass">@p.EstadoPedido</span>
+                            </td>
+                            <td>
+                                @if (p.EstadoPago == "Pagado")
+                                {
+                                    <span class="status-badge status-pago-pagado"><i class="bi bi-check-circle-fill me-1"></i> Pagado</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-pago-pendiente"><i class="bi bi-clock-fill me-1"></i> Pendiente</span>
+                                }
+                            </td>
+                            <td class="text-muted small">@p.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-center pe-3">
+                                @* BOTÓN 1: PAGADO - Solo si el pago está pendiente *@
+                                @if (p.EstadoPago == "Pendiente")
+                                {
+                                    <form asp-action="EmpleadoMarcarPagado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
+                                        <button class="btn-action pay" title="Marcar como Pagado"><i class="bi bi-currency-dollar"></i></button>
+                                    </form>
+                                }
+
+                                @* BOTÓN 2: ENVIADO - Solo si ya está pagado, NO es recojo en tienda y aún no está en despacho *@
+                                @if (p.EstadoPago == "Pagado" && p.TipoEntrega?.Nombre != "Recojo en tienda" && p.EstadoPedido != "En despacho" && p.EstadoPedido != "Finalizado")
+                                {
+                                    <form asp-action="EmpleadoMarcarEnviado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
+                                        <button class="btn-action ship" title="Marcar como Enviado"><i class="bi bi-truck"></i></button>
+                                    </form>
+                                }
+
+                                @* BOTÓN 3: ENTREGADO - Si está pagado y (ya fue enviado O es recojo en tienda) *@
+                                @if (p.EstadoPago == "Pagado" && (p.EstadoPedido == "En despacho" || p.TipoEntrega?.Nombre == "Recojo en tienda") && p.EstadoPedido != "Finalizado")
+                                {
+                                    <form asp-action="EmpleadoMarcarEntregado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0" onsubmit="return confirm('¿Confirmar que el pedido fue entregado/recogido?');">
+                                        <button class="btn-action deliver" title="@(p.TipoEntrega?.Nombre == "Recojo en tienda" ? "Marcar como Recogido" : "Marcar como Entregado")">
+                                            <i class="bi @(p.TipoEntrega?.Nombre == "Recojo en tienda" ? "bi-bag-check" : "bi-check-circle")"></i>
+                                        </button>
+                                    </form>
+                                }
+
+                                @* BOTÓN 4: CANCELAR - Siempre que no esté finalizado *@
+                                @if (p.EstadoPedido != "Finalizado" && p.EstadoPedido != "Cancelado")
+                                {
+                                    <form asp-action="EmpleadoCancelar" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0" onsubmit="return confirm('¿Estás seguro de cancelar este pedido? El stock será devuelto automáticamente.');">
+                                        <button class="btn-action cancel" title="Cancelar Pedido"><i class="bi bi-x-lg"></i></button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

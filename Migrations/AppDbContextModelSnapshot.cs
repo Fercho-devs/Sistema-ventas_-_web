@@ -61,6 +61,10 @@ namespace SistemaWeb_Ventas.Migrations
                     b.Property<int>("IdProducto")
                         .HasColumnType("int");
 
+                    b.Property<string>("TallaSeleccionada")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("IdCarritoDetalle");
 
                     b.HasIndex("IdCarrito");
@@ -152,6 +156,10 @@ namespace SistemaWeb_Ventas.Migrations
                     b.Property<decimal>("PrecioUnitario")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("TallaSeleccionada")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("IdDetallePedido");
 

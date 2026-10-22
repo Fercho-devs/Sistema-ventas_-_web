@@ -17,6 +17,9 @@ namespace SistemaWeb_Ventas.Models
         [Precision(10,2)]
         public decimal PrecioUnitario { get; set; }
 
+        [StringLength(50)]
+        public string? TallaSeleccionada { get; set; }
+
         public int IdPedido { get; set; }
         [ForeignKey("IdPedido")]
         public Pedido? Pedido { get; set; }
