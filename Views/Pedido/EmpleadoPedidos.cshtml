@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Pedidos Activos — Empleado</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <style>
@@ -207,6 +208,10 @@
                 <i class="bi bi-check-circle-fill me-2"></i>@TempData["MensajeExito"]
             </div>
         }
+        @if (TempData["ErrorPedido"] != null)
+        {
+            <div class="alert alert-danger py-2 small">@TempData["ErrorPedido"]</div>
+        }
 
         <div class="d-flex align-items-center mb-4 gap-3">
             <i class="bi bi-bag-check text-danger fs-3"></i>
@@ -274,6 +279,10 @@
                                 {
                                     <span class="status-badge status-pago-pagado"><i class="bi bi-check-circle-fill me-1"></i> Pagado</span>
                                 }
+                                else if (p.EstadoPago == "Por cobrar")
+                                {
+                                    <span class="status-badge status-pago-pendiente"><i class="bi bi-cash-stack me-1"></i> Contra entrega</span>
+                                }
                                 else
                                 {
                                     <span class="status-badge status-pago-pendiente"><i class="bi bi-clock-fill me-1"></i> Pendiente</span>
@@ -281,34 +290,67 @@
                             </td>
                             <td class="text-muted small">@p.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
                             <td class="text-center pe-3">
-                                @* BOTÓN 1: PAGADO - Solo si el pago está pendiente *@
-                                @if (p.EstadoPago == "Pendiente")
+                                @if (p.EstadoPedido == "Pendiente")
                                 {
-                                    <form asp-action="EmpleadoMarcarPagado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
-                                        <button class="btn-action pay" title="Marcar como Pagado"><i class="bi bi-currency-dollar"></i></button>
+                                    <form asp-action="EmpleadoAprobar" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
+                                        <button class="btn-action approve" title="Aprobar pedido"><i class="bi bi-check-lg"></i></button>
                                     </form>
                                 }
 
-                                @* BOTÓN 2: ENVIADO - Solo si ya está pagado, NO es recojo en tienda y aún no está en despacho *@
-                                @if (p.EstadoPago == "Pagado" && p.TipoEntrega?.Nombre != "Recojo en tienda" && p.EstadoPedido != "En despacho" && p.EstadoPedido != "Finalizado")
+                                @if (p.EstadoPedido == "Aprobado")
+                                {
+                                    <form asp-action="EmpleadoDesaprobar" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
+                                        <button class="btn-action cancel" title="Desaprobar pedido"><i class="bi bi-x-lg"></i></button>
+                                    </form>
+
+                                    @if (p.EstadoPago == "Pendiente")
+                                    {
+                                        <form asp-action="EmpleadoMarcarPagado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
+                                            <button class="btn-action pay" title="Marcar como Pagado"><i class="bi bi-currency-dollar"></i></button>
+                                        </form>
+
+                                        @if (p.TipoEntrega?.Nombre != "Recojo en tienda")
+                                        {
+                                            <form asp-action="EmpleadoPagoContraEntrega" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
+                                                <button class="btn-action" title="Pago contra entrega"><i class="bi bi-cash-stack"></i></button>
+                                            </form>
+                                        }
+                                    }
+
+                                    @if (p.TipoEntrega?.Nombre == "Recojo en tienda" && p.EstadoPago == "Pagado")
+                                    {
+                                        <form asp-action="EmpleadoMarcarEntregado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0" onsubmit="return confirm('¿Confirmar que el cliente recogió el pedido?');">
+                                            <button class="btn-action deliver" title="Marcar como recogido"><i class="bi bi-bag-check"></i></button>
+                                        </form>
+                                    }
+                                }
+
+                                @if (p.EstadoPedido == "Aprobado" && (p.EstadoPago == "Pagado" || p.EstadoPago == "Por cobrar") && p.TipoEntrega?.Nombre != "Recojo en tienda" && p.Entrega?.IdRepartidor == null)
+                                {
+                                    <form asp-action="EmpleadoAsignarRepartidor" method="post" class="d-inline-flex align-items-center gap-1 mt-1">
+                                        <input type="hidden" name="id" value="@p.IdPedido" />
+                                        <select name="idRepartidor" class="form-select form-select-sm bg-dark text-light border-secondary" style="width:150px" required>
+                                            <option value="">Repartidor</option>
+                                            @foreach (var repartidor in (ViewBag.Repartidores as IEnumerable<SistemaWeb_Ventas.Models.Usuario>) ?? Enumerable.Empty<SistemaWeb_Ventas.Models.Usuario>())
+                                            {
+                                                <option value="@repartidor.IdUsuario">@repartidor.NombreUsuario</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="btn-action ship" title="Asignar repartidor"><i class="bi bi-person-check"></i></button>
+                                    </form>
+                                }
+
+                                @* ENVIADO: requiere aprobación, pago y repartidor *@
+                                @if (p.EstadoPedido == "Aprobado" && (p.EstadoPago == "Pagado" || p.EstadoPago == "Por cobrar") && p.TipoEntrega?.Nombre != "Recojo en tienda" && p.Entrega?.IdRepartidor != null)
                                 {
                                     <form asp-action="EmpleadoMarcarEnviado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
                                         <button class="btn-action ship" title="Marcar como Enviado"><i class="bi bi-truck"></i></button>
                                     </form>
                                 }
 
-                                @* BOTÓN 3: ENTREGADO - Si está pagado y (ya fue enviado O es recojo en tienda) *@
-                                @if (p.EstadoPago == "Pagado" && (p.EstadoPedido == "En despacho" || p.TipoEntrega?.Nombre == "Recojo en tienda") && p.EstadoPedido != "Finalizado")
-                                {
-                                    <form asp-action="EmpleadoMarcarEntregado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0" onsubmit="return confirm('¿Confirmar que el pedido fue entregado/recogido?');">
-                                        <button class="btn-action deliver" title="@(p.TipoEntrega?.Nombre == "Recojo en tienda" ? "Marcar como Recogido" : "Marcar como Entregado")">
-                                            <i class="bi @(p.TipoEntrega?.Nombre == "Recojo en tienda" ? "bi-bag-check" : "bi-check-circle")"></i>
-                                        </button>
-                                    </form>
-                                }
 
-                                @* BOTÓN 4: CANCELAR - Siempre que no esté finalizado *@
-                                @if (p.EstadoPedido != "Finalizado" && p.EstadoPedido != "Cancelado")
+                                @* CANCELAR: disponible después de aprobar *@
+                                @if (p.EstadoPedido == "Aprobado")
                                 {
                                     <form asp-action="EmpleadoCancelar" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0" onsubmit="return confirm('¿Estás seguro de cancelar este pedido? El stock será devuelto automáticamente.');">
                                         <button class="btn-action cancel" title="Cancelar Pedido"><i class="bi bi-x-lg"></i></button>

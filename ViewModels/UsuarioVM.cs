@@ -10,11 +10,11 @@ namespace SistemaWeb_Ventas.ViewModels
         public string NombreUsuario { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El DNI es obligatorio")]
-        [StringLength(15)]
+        [RegularExpression(@"^[0-9]{8}$", ErrorMessage = "El DNI debe tener 8 dígitos")]
         public string DNI { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El teléfono es obligatorio")]
-        [StringLength(15)]
+        [RegularExpression(@"^9[0-9]{8}$", ErrorMessage = "Ingresa un teléfono peruano válido de 9 dígitos")]
         public string Telefono { get; set; } = string.Empty;
 
         [StringLength(200)]
@@ -34,7 +34,6 @@ namespace SistemaWeb_Ventas.ViewModels
         [Compare("Contrasena", ErrorMessage = "Las contraseñas no coinciden")]
         public string ConfirmarContrasena { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Selecciona un rol")]
         public int IdRol { get; set; }
 
         public List<Rol> Roles { get; set; } = new();

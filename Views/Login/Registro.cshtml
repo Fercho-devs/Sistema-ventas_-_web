@@ -106,12 +106,12 @@
             <div class="row">
                 <div class="col-6 mb-3">
                     <label asp-for="DNI" class="form-label">DNI</label>
-                    <input asp-for="DNI" class="form-control" maxlength="15" />
+                    <input asp-for="DNI" class="form-control" maxlength="8" inputmode="numeric" pattern="[0-9]{8}" />
                     <span asp-validation-for="DNI" class="text-danger small"></span>
                 </div>
                 <div class="col-6 mb-3">
                     <label asp-for="Telefono" class="form-label">Teléfono</label>
-                    <input asp-for="Telefono" class="form-control" maxlength="15" />
+                    <input asp-for="Telefono" class="form-control" maxlength="9" inputmode="numeric" pattern="9[0-9]{8}" />
                     <span asp-validation-for="Telefono" class="text-danger small"></span>
                 </div>
             </div>
@@ -138,14 +138,6 @@
                     <input asp-for="ConfirmarContrasena" class="form-control" />
                     <span asp-validation-for="ConfirmarContrasena" class="text-danger small"></span>
                 </div>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="IdRol" class="form-label">Tipo de cuenta</label>
-                <select asp-for="IdRol" asp-items="@(new SelectList(Model.Roles, "IdRol", "NombreRol"))" class="form-select">
-                    <option value="">-- Selecciona un rol --</option>
-                </select>
-                <span asp-validation-for="IdRol" class="text-danger small"></span>
             </div>
 
             <button type="submit" class="btn-registrar btn mt-2">

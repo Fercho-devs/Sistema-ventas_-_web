@@ -341,6 +341,54 @@ namespace SistemaWeb_Ventas.Migrations
                     b.ToTable("Productos");
                 });
 
+            modelBuilder.Entity("SistemaWeb_Ventas.Models.RegistroAuditoria", b =>
+                {
+                    b.Property<int>("IdRegistroAuditoria")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRegistroAuditoria"));
+
+                    b.Property<string>("Accion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Detalle")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Entidad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("FechaHora")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("IdEntidad")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RolUsuario")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("IdRegistroAuditoria");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("RegistrosAuditoria");
+                });
+
             modelBuilder.Entity("SistemaWeb_Ventas.Models.Rol", b =>
                 {
                     b.Property<int>("IdRol")
@@ -589,6 +637,16 @@ namespace SistemaWeb_Ventas.Migrations
                         .IsRequired();
 
                     b.Navigation("Categoria");
+                });
+
+            modelBuilder.Entity("SistemaWeb_Ventas.Models.RegistroAuditoria", b =>
+                {
+                    b.HasOne("SistemaWeb_Ventas.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("SistemaWeb_Ventas.Models.Usuario", b =>

@@ -1,0 +1,59 @@
+@model SistemaWeb_Ventas.Models.Usuario
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Detalle del cliente</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; }
+        .card-dark { background: #111; border: 1px solid #222; border-radius: 14px; }
+        .table { color: #fff; }
+        .table th, .table td { border-color: #222; }
+        .label { color: #888; }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold m-0">@Model.NombreUsuario</h3>
+            <a asp-action="Index" class="btn btn-outline-light rounded-pill">Volver</a>
+        </div>
+
+        <div class="card-dark p-4 mb-4">
+            <div class="row g-3">
+                <div class="col-md-4"><span class="label d-block">Correo</span>@Model.Correo</div>
+                <div class="col-md-2"><span class="label d-block">DNI</span>@Model.DNI</div>
+                <div class="col-md-3"><span class="label d-block">Teléfono</span>@Model.Telefono</div>
+                <div class="col-md-3"><span class="label d-block">Dirección</span>@(Model.Direccion ?? "Sin dirección")</div>
+            </div>
+        </div>
+
+        <div class="card-dark p-3 table-responsive">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>Pedido</th><th>Fecha</th><th>Entrega</th><th>Estado</th><th>Pago</th><th>Total</th></tr></thead>
+                <tbody>
+                    @foreach (var pedido in Model.Pedidos.OrderByDescending(p => p.FechaPedido))
+                    {
+                        <tr>
+                            <td>#@pedido.IdPedido</td>
+                            <td>@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@pedido.TipoEntrega?.Nombre</td>
+                            <td>@pedido.EstadoPedido</td>
+                            <td>@pedido.EstadoPago</td>
+                            <td class="text-danger fw-bold">S/ @pedido.Total.ToString("0.00")</td>
+                        </tr>
+                    }
+                    @if (!Model.Pedidos.Any())
+                    {
+                        <tr><td colspan="6" class="text-center text-muted py-4">Este cliente aún no tiene pedidos.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

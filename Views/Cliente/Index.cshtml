@@ -1,0 +1,73 @@
+@model IEnumerable<SistemaWeb_Ventas.Models.Usuario>
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clientes — Administrador</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; }
+        .navbar { border-bottom: 1px solid #222; padding: 20px 0; }
+        .brand { color: #fff; text-decoration: none; font-size: 1.8rem; font-weight: 700; }
+        .brand span { color: #e63946; }
+        .card-dark { background: #111; border: 1px solid #222; border-radius: 14px; }
+        .table { color: #fff; }
+        .table th { color: #aaa; border-color: #222; }
+        .table td { border-color: #222; vertical-align: middle; }
+        .form-control-dark { background: #0a0a0a; border: 1px solid #333; color: #fff; }
+        .form-control-dark:focus { background: #0a0a0a; border-color: #e63946; color: #fff; box-shadow: none; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="brand" href="#">QUESITO<span>.</span></a>
+            <a asp-controller="Welcome" asp-action="Administrador" class="btn btn-outline-light rounded-pill">Panel</a>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <h3 class="fw-bold mb-4">Control de clientes</h3>
+
+        @if (TempData["MensajeExito"] != null) { <div class="alert alert-success">@TempData["MensajeExito"]</div>; }
+        @if (TempData["ErrorCliente"] != null) { <div class="alert alert-danger">@TempData["ErrorCliente"]</div>; }
+
+        <div class="card-dark p-3 table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr><th>Cliente</th><th>Correo</th><th>DNI</th><th>Teléfono</th><th>Pedidos</th><th class="text-end">Acciones</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var cliente in Model)
+                    {
+                        <tr>
+                            <td>@cliente.NombreUsuario</td>
+                            <td>@cliente.Correo</td>
+                            <td>@cliente.DNI</td>
+                            <td>@cliente.Telefono</td>
+                            <td>@cliente.Pedidos.Count</td>
+                            <td class="text-end">
+                                <a asp-action="Detalle" asp-route-id="@cliente.IdUsuario" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i></a>
+                                <form asp-action="RestablecerContrasena" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@cliente.IdUsuario" />
+                                    <input type="password" name="nuevaContrasena" minlength="6" placeholder="Nueva contraseña" class="form-control form-control-dark d-inline-block w-auto mx-1" required />
+                                    <button type="submit" class="btn btn-sm btn-outline-warning"><i class="bi bi-key"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <nav class="d-flex justify-content-between align-items-center mt-3" aria-label="Paginación">
+            <a asp-action="Index" asp-route-pagina="@(Math.Max(1, (int)ViewBag.PaginaActual - 1))" class="btn btn-outline-light rounded-pill @(ViewBag.PaginaActual <= 1 ? "disabled" : "")">Anterior</a>
+            <span class="text-muted small">Página @ViewBag.PaginaActual de @ViewBag.TotalPaginas</span>
+            <a asp-action="Index" asp-route-pagina="@(Math.Min((int)ViewBag.TotalPaginas, (int)ViewBag.PaginaActual + 1))" class="btn btn-outline-light rounded-pill @(ViewBag.PaginaActual >= ViewBag.TotalPaginas ? "disabled" : "")">Siguiente</a>
+        </nav>
+    </div>
+</body>
+</html>

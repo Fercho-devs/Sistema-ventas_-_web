@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaWeb_Ventas.Data;
@@ -6,14 +7,33 @@ using SistemaWeb_Ventas.Models;
 
 namespace SistemaWeb_Ventas.Controllers
 {
+    [Authorize]
     public class PedidoController : Controller
     {
         private readonly AppDbContext _db;
         public PedidoController(AppDbContext db) => _db = db;
 
         private string? GetRol() => HttpContext.Session.GetString("UsuarioRol");
-        private int GetUserId() => int.Parse(HttpContext.Session.GetString("UsuarioId") ?? "0");
+        private int GetUserId() => int.TryParse(HttpContext.Session.GetString("UsuarioId"), out var id) ? id : 0;
 
+        private void RegistrarAuditoria(string accion, string entidad, int? idEntidad, string detalle)
+        {
+            var idUsuario = int.TryParse(HttpContext.Session.GetString("UsuarioId"), out var id) ? id : (int?)null;
+
+            _db.RegistrosAuditoria.Add(new RegistroAuditoria
+            {
+                IdUsuario = idUsuario,
+                NombreUsuario = HttpContext.Session.GetString("UsuarioNombre") ?? "Usuario",
+                RolUsuario = HttpContext.Session.GetString("UsuarioRol") ?? "",
+                Accion = accion,
+                Entidad = entidad,
+                IdEntidad = idEntidad,
+                Detalle = detalle,
+                FechaHora = GetHoraPeru()
+            });
+        }
+
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Catalogo()
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -22,7 +42,9 @@ namespace SistemaWeb_Ventas.Controllers
             return View(productos);
         }
 
+        [Authorize(Roles = "Cliente")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AgregarCarrito(int idProducto, int cantidad, string? tallaSeleccionada)
         {
             if (GetRol() != "Cliente") return Json(new { ok = false, mensaje = "Sesión inválida." });
@@ -89,7 +111,9 @@ namespace SistemaWeb_Ventas.Controllers
             return Json(new { ok = true, mensaje = $"Se agregó correctamente al carrito. Talla: {tallaSeleccionada}", restante });
         }
 
+        [Authorize(Roles = "Cliente")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ActualizarCantidadCarrito(int idDetalle, int cantidad)
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -115,7 +139,9 @@ namespace SistemaWeb_Ventas.Controllers
             return RedirectToAction(nameof(Carrito));
         }
 
+        [Authorize(Roles = "Cliente")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EliminarDelCarrito(int idDetalle)
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -130,6 +156,7 @@ namespace SistemaWeb_Ventas.Controllers
             return RedirectToAction(nameof(Carrito));
         }
 
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Carrito()
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -141,7 +168,9 @@ namespace SistemaWeb_Ventas.Controllers
             return View(carrito);
         }
 
+        [Authorize(Roles = "Cliente")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmarPedido(int idTipoEntrega, string? direccionDestino, string? ciudadDestino, string? jironDestino)
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -178,63 +207,79 @@ namespace SistemaWeb_Ventas.Controllers
                 .Include(c => c.Detalles).ThenInclude(d => d.Producto)
                 .FirstOrDefaultAsync(c => c.IdUsuario == idUsuario);
 
-            if (carrito == null || !carrito.Detalles.Any()) return RedirectToAction(nameof(Carrito));
+            if (carrito == null || !carrito.Detalles.Any())
+                return RedirectToAction(nameof(Carrito));
 
-            var pedido = new Pedido
-            {
-                IdCliente = idUsuario,
-                IdTipoEntrega = idTipoEntrega,
-                Total = carrito.Detalles.Sum(d => d.Producto!.Precio * d.Cantidad)
-            };
-            _db.Pedidos.Add(pedido);
-            await _db.SaveChangesAsync();
+            await using var transaccion = await _db.Database.BeginTransactionAsync();
 
-            foreach (var d in carrito.Detalles)
+            try
             {
-                _db.DetallesPedido.Add(new DetallePedido
+                foreach (var detalle in carrito.Detalles)
                 {
-                    IdPedido = pedido.IdPedido,
-                    IdProducto = d.IdProducto,
-                    Cantidad = d.Cantidad,
-                    PrecioUnitario = d.Producto!.Precio,
-                    TallaSeleccionada = d.TallaSeleccionada
-                });
-                d.Producto.Stock -= d.Cantidad;
-            }
+                    if (detalle.Producto == null || !detalle.Producto.Activo)
+                        throw new InvalidOperationException("Uno de los productos ya no está disponible.");
 
-            // Crear la entrega con los datos según el tipo
-            var entrega = new Entrega
-            {
-                IdPedido = pedido.IdPedido
-            };
+                    if (detalle.Cantidad <= 0 || detalle.Cantidad > detalle.Producto.Stock)
+                        throw new InvalidOperationException($"Stock insuficiente para {detalle.Producto.Nombre}.");
+                }
 
-            if (idTipoEntrega == 1)
-            {
-                // Recojo en tienda - sin dirección
-                entrega.DireccionDestino = "Recojo en tienda - Cajamarca";
-            }
-            else if (idTipoEntrega == 2)
-            {
-                // Envío a domicilio
-                entrega.DireccionDestino = direccionDestino;
-                entrega.CiudadDestino = "Cajamarca";
-            }
-            else if (idTipoEntrega == 3)
-            {
-                // Envío a otra ciudad
-                entrega.CiudadDestino = ciudadDestino;
-                entrega.DireccionDestino = jironDestino;
-            }
+                var pedido = new Pedido
+                {
+                    IdCliente = idUsuario,
+                    IdTipoEntrega = idTipoEntrega,
+                    Total = carrito.Detalles.Sum(d => d.Producto!.Precio * d.Cantidad)
+                };
 
-            _db.Entregas.Add(entrega);
+                _db.Pedidos.Add(pedido);
+                await _db.SaveChangesAsync();
 
-            // Limpiar carrito
-            _db.CarritoDetalles.RemoveRange(carrito.Detalles);
-            await _db.SaveChangesAsync();
+                foreach (var detalle in carrito.Detalles)
+                {
+                    _db.DetallesPedido.Add(new DetallePedido
+                    {
+                        IdPedido = pedido.IdPedido,
+                        IdProducto = detalle.IdProducto,
+                        Cantidad = detalle.Cantidad,
+                        PrecioUnitario = detalle.Producto!.Precio,
+                        TallaSeleccionada = detalle.TallaSeleccionada
+                    });
+
+                    detalle.Producto!.Stock -= detalle.Cantidad;
+                }
+
+                var entrega = new Entrega { IdPedido = pedido.IdPedido };
+
+                if (idTipoEntrega == 1)
+                {
+                    entrega.DireccionDestino = "Recojo en tienda - Cajamarca";
+                }
+                else if (idTipoEntrega == 2)
+                {
+                    entrega.DireccionDestino = direccionDestino;
+                    entrega.CiudadDestino = "Cajamarca";
+                }
+                else if (idTipoEntrega == 3)
+                {
+                    entrega.CiudadDestino = ciudadDestino;
+                    entrega.DireccionDestino = jironDestino;
+                }
+
+                _db.Entregas.Add(entrega);
+                _db.CarritoDetalles.RemoveRange(carrito.Detalles);
+                await _db.SaveChangesAsync();
+                await transaccion.CommitAsync();
+            }
+            catch (InvalidOperationException ex)
+            {
+                await transaccion.RollbackAsync();
+                TempData["ErrorPedido"] = ex.Message;
+                return RedirectToAction(nameof(Carrito));
+            }
 
             return RedirectToAction(nameof(MisPedidos));
         }
 
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> MisPedidos()
         {
             if (GetRol() != "Cliente") return RedirectToAction("Index", "Login");
@@ -247,40 +292,59 @@ namespace SistemaWeb_Ventas.Controllers
             return View(pedidos);
         }
 
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Index(int pagina = 1)
         {
-            if (GetRol() != "Administrador") return RedirectToAction("Index", "Login");
-            var pedidos = await _db.Pedidos
+            if (GetRol() != "Administrador") return RedirectToAction("LogIn", "Login");
+
+            const int tamanoPagina = 20;
+            pagina = Math.Max(pagina, 1);
+
+            var consulta = _db.Pedidos
                 .Include(p => p.Cliente)
-                .Include(p => p.TipoEntrega)
-                .OrderByDescending(p => p.FechaPedido).ToListAsync();
+                .Include(p => p.TipoEntrega);
+
+            var total = await consulta.CountAsync();
+            var pedidos = await consulta
+                .OrderByDescending(p => p.FechaPedido)
+                .Skip((pagina - 1) * tamanoPagina)
+                .Take(tamanoPagina)
+                .ToListAsync();
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = Math.Max(1, (int)Math.Ceiling(total / (double)tamanoPagina));
             return View(pedidos);
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Aprobar(int id)
         {
             if (GetRol() != "Administrador") return RedirectToAction("Index", "Login");
             var p = await _db.Pedidos.FindAsync(id);
-            if (p != null) { p.EstadoPedido = "Aprobado"; await _db.SaveChangesAsync(); }
+            if (p != null && p.EstadoPedido == "Pendiente")
+            {
+                p.EstadoPedido = "Aprobado";
+                RegistrarAuditoria("Aprobó pedido", "Pedido", p.IdPedido, "Pedido aprobado por administrador.");
+                await _db.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
-        public async Task<IActionResult> MarcarPagado(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Desaprobar(int id)
         {
-            if (GetRol() != "Administrador") return RedirectToAction("Index", "Login");
-            var p = await _db.Pedidos.FindAsync(id);
-            if (p != null) { p.EstadoPago = "Pagado"; await _db.SaveChangesAsync(); }
-            return RedirectToAction(nameof(Index));
-        }
+            var pedido = await _db.Pedidos.FindAsync(id);
+            if (pedido != null && pedido.EstadoPedido == "Aprobado")
+            {
+                pedido.EstadoPedido = "Pendiente";
+                RegistrarAuditoria("Desaprobó pedido", "Pedido", pedido.IdPedido, "Pedido devuelto al estado pendiente por el administrador.");
+                await _db.SaveChangesAsync();
+            }
 
-        [HttpPost]
-        public async Task<IActionResult> Cancelar(int id)
-        {
-            if (GetRol() != "Administrador") return RedirectToAction("Index", "Login");
-            var p = await _db.Pedidos.FindAsync(id);
-            if (p != null) { p.EstadoPedido = "Cancelado"; await _db.SaveChangesAsync(); }
             return RedirectToAction(nameof(Index));
         }
 
@@ -299,6 +363,7 @@ namespace SistemaWeb_Ventas.Controllers
             }
         }
 
+        [Authorize(Roles = "Empleado")]
         public async Task<IActionResult> EmpleadoPedidos()
         {
             if (GetRol() != "Empleado") return RedirectToAction("Index", "Login");
@@ -312,9 +377,16 @@ namespace SistemaWeb_Ventas.Controllers
                 .OrderByDescending(p => p.FechaPedido)
                 .ToListAsync();
 
+            ViewBag.Repartidores = await _db.Usuarios
+                .Include(u => u.Rol)
+                .Where(u => u.Rol != null && u.Rol.NombreRol == "Repartidor")
+                .OrderBy(u => u.NombreUsuario)
+                .ToListAsync();
+
             return View(pedidos);
         }
 
+        [Authorize(Roles = "Empleado")]
         public async Task<IActionResult> EmpleadoHistorial()
         {
             if (GetRol() != "Empleado") return RedirectToAction("Index", "Login");
@@ -324,7 +396,7 @@ namespace SistemaWeb_Ventas.Controllers
                 .Include(p => p.TipoEntrega)
                 .Include(p => p.Detalles).ThenInclude(d => d.Producto)
                 .Include(p => p.Entrega).ThenInclude(e => e!.EstadosEntrega)
-                .Where(p => p.EstadoPedido == "Finalizado" || p.EstadoPedido == "Cancelado")
+                .Where(p => p.EstadoPedido == "Finalizado")
                 .OrderByDescending(p => p.FechaPedido)
                 .ToListAsync();
 
@@ -338,7 +410,41 @@ namespace SistemaWeb_Ventas.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Empleado")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmpleadoAprobar(int id)
+        {
+            var pedido = await _db.Pedidos.FindAsync(id);
+            if (pedido == null || pedido.EstadoPedido == "Finalizado" || pedido.EstadoPedido == "Cancelado")
+                return RedirectToAction(nameof(EmpleadoPedidos));
+
+            pedido.EstadoPedido = "Aprobado";
+            RegistrarAuditoria("Aprobó pedido", "Pedido", pedido.IdPedido, "Pedido aprobado por empleado.");
+            await _db.SaveChangesAsync();
+            TempData["MensajeExito"] = "Pedido aprobado correctamente.";
+            return RedirectToAction(nameof(EmpleadoPedidos));
+        }
+
+        [Authorize(Roles = "Empleado")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmpleadoDesaprobar(int id)
+        {
+            var pedido = await _db.Pedidos.FindAsync(id);
+            if (pedido == null || pedido.EstadoPedido != "Aprobado")
+                return RedirectToAction(nameof(EmpleadoPedidos));
+
+            pedido.EstadoPedido = "Pendiente";
+            RegistrarAuditoria("Desaprobó pedido", "Pedido", pedido.IdPedido, "Pedido devuelto al estado pendiente por el empleado.");
+            await _db.SaveChangesAsync();
+            TempData["MensajeExito"] = "Pedido devuelto a pendiente.";
+            return RedirectToAction(nameof(EmpleadoPedidos));
+        }
+
+        [Authorize(Roles = "Empleado")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EmpleadoMarcarPagado(int id)
         {
             if (GetRol() != "Empleado") return RedirectToAction("Index", "Login");
@@ -349,7 +455,7 @@ namespace SistemaWeb_Ventas.Controllers
                 .Include(p => p.Entrega)
                 .FirstOrDefaultAsync(x => x.IdPedido == id);
 
-            if (p != null)
+            if (p != null && p.EstadoPedido == "Aprobado")
             {
                 p.EstadoPago = "Pagado";
 
@@ -364,14 +470,44 @@ namespace SistemaWeb_Ventas.Controllers
                     });
                 }
 
+                RegistrarAuditoria("Registró pago", "Pedido", p.IdPedido, "Pago confirmado por empleado.");
                 await _db.SaveChangesAsync();
                 TempData["MensajeExito"] = "Pago registrado correctamente.";
+            }
+            else
+            {
+                TempData["ErrorPedido"] = "Solo puedes registrar el pago de pedidos aprobados.";
             }
 
             return RedirectToAction(nameof(EmpleadoPedidos));
         }
 
+        [Authorize(Roles = "Empleado")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmpleadoPagoContraEntrega(int id)
+        {
+            var pedido = await _db.Pedidos
+                .Include(p => p.TipoEntrega)
+                .FirstOrDefaultAsync(p => p.IdPedido == id);
+
+            if (pedido == null || pedido.EstadoPedido != "Aprobado"
+                || pedido.TipoEntrega?.Nombre == "Recojo en tienda")
+            {
+                TempData["ErrorPedido"] = "Solo se puede configurar pago contra entrega en pedidos aprobados con envío.";
+                return RedirectToAction(nameof(EmpleadoPedidos));
+            }
+
+            pedido.EstadoPago = "Por cobrar";
+            RegistrarAuditoria("Configuró pago contra entrega", "Pedido", pedido.IdPedido, "El pago se cobrará al recibir el pedido.");
+            await _db.SaveChangesAsync();
+            TempData["MensajeExito"] = "Pago contra entrega configurado.";
+            return RedirectToAction(nameof(EmpleadoPedidos));
+        }
+
+        [Authorize(Roles = "Empleado")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EmpleadoMarcarEnviado(int id)
         {
             if (GetRol() != "Empleado") return RedirectToAction("Index", "Login");
@@ -379,10 +515,17 @@ namespace SistemaWeb_Ventas.Controllers
             var p = await _db.Pedidos
                 .Include(p => p.Entrega)
                 .Include(p => p.Cliente)
+                .Include(p => p.TipoEntrega)
                 .FirstOrDefaultAsync(x => x.IdPedido == id);
 
-            if (p != null)
+            if (p != null && p.EstadoPedido == "Aprobado" && p.EstadoPago == "Pagado")
             {
+                if (p.TipoEntrega?.Nombre != "Recojo en tienda" && p.Entrega?.IdRepartidor == null)
+                {
+                    TempData["ErrorPedido"] = "Debes asignar un repartidor antes de marcar el pedido como enviado.";
+                    return RedirectToAction(nameof(EmpleadoPedidos));
+                }
+
                 p.EstadoPedido = "En despacho";
 
                 if (p.Entrega != null)
@@ -396,14 +539,21 @@ namespace SistemaWeb_Ventas.Controllers
                     });
                 }
 
+                RegistrarAuditoria("Marcó envío", "Pedido", p.IdPedido, "Pedido marcado como enviado por empleado.");
                 await _db.SaveChangesAsync();
                 TempData["MensajeExito"] = "Pedido marcado como enviado.";
+            }
+            else
+            {
+                TempData["ErrorPedido"] = "Solo puedes enviar pedidos aprobados y pagados con repartidor asignado.";
             }
 
             return RedirectToAction(nameof(EmpleadoPedidos));
         }
 
+        [Authorize(Roles = "Empleado")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EmpleadoMarcarEntregado(int id)
         {
             if (GetRol() != "Empleado") return RedirectToAction("Index", "Login");
@@ -414,7 +564,8 @@ namespace SistemaWeb_Ventas.Controllers
                 .Include(p => p.TipoEntrega)
                 .FirstOrDefaultAsync(x => x.IdPedido == id);
 
-            if (p != null)
+            if (p != null && p.EstadoPedido == "Aprobado" && p.EstadoPago == "Pagado"
+                && p.TipoEntrega?.Nombre == "Recojo en tienda")
             {
                 p.EstadoPedido = "Finalizado";
 
@@ -434,6 +585,7 @@ namespace SistemaWeb_Ventas.Controllers
                     });
                 }
 
+                RegistrarAuditoria("Marcó entrega", "Pedido", p.IdPedido, "Pedido marcado como entregado por empleado.");
                 await _db.SaveChangesAsync();
                 TempData["MensajeExito"] = "Pedido marcado como entregado.";
             }
@@ -441,7 +593,48 @@ namespace SistemaWeb_Ventas.Controllers
             return RedirectToAction(nameof(EmpleadoPedidos));
         }
 
+        [Authorize(Roles = "Empleado")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmpleadoAsignarRepartidor(int id, int idRepartidor)
+        {
+            if (GetRol() != "Empleado")
+                return RedirectToAction("Index", "Login");
+
+            var pedido = await _db.Pedidos
+                .Include(p => p.Entrega)
+                .Include(p => p.TipoEntrega)
+                .FirstOrDefaultAsync(p => p.IdPedido == id);
+
+            var repartidor = await _db.Usuarios
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(u => u.IdUsuario == idRepartidor
+                    && u.Rol != null
+                    && u.Rol.NombreRol == "Repartidor");
+
+            if (pedido?.Entrega == null || repartidor == null
+                || pedido.EstadoPedido != "Aprobado"
+                || pedido.TipoEntrega?.Nombre == "Recojo en tienda")
+                return RedirectToAction(nameof(EmpleadoPedidos));
+
+            pedido.Entrega.IdRepartidor = repartidor.IdUsuario;
+            _db.EstadosEntrega.Add(new EstadoEntrega
+            {
+                IdEntrega = pedido.Entrega.IdEntrega,
+                Estado = "Repartidor asignado",
+                Observacion = $"Entrega asignada a {repartidor.NombreUsuario}.",
+                FechaHora = GetHoraPeru()
+            });
+
+            RegistrarAuditoria("Asignó repartidor", "Pedido", pedido.IdPedido, $"Pedido asignado al repartidor {repartidor.NombreUsuario}.");
+            await _db.SaveChangesAsync();
+            TempData["MensajeExito"] = "Repartidor asignado correctamente.";
+            return RedirectToAction(nameof(EmpleadoPedidos));
+        }
+
+        [Authorize(Roles = "Empleado")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EmpleadoCancelar(int id)
         {
             if (GetRol() != "Empleado") return RedirectToAction("Index", "Login");
@@ -452,8 +645,10 @@ namespace SistemaWeb_Ventas.Controllers
                 .Include(p => p.Entrega)
                 .FirstOrDefaultAsync(x => x.IdPedido == id);
 
-            if (p != null)
+            if (p != null && p.EstadoPedido == "Aprobado")
             {
+                await using var transaccion = await _db.Database.BeginTransactionAsync();
+
                 foreach (var detalle in p.Detalles)
                 {
                     if (detalle.Producto != null)
@@ -478,8 +673,14 @@ namespace SistemaWeb_Ventas.Controllers
                     });
                 }
 
+                RegistrarAuditoria("Canceló pedido", "Pedido", p.IdPedido, "Pedido cancelado por empleado y stock devuelto.");
                 await _db.SaveChangesAsync();
+                await transaccion.CommitAsync();
                 TempData["MensajeExito"] = "Pedido cancelado y stock devuelto.";
+            }
+            else
+            {
+                TempData["ErrorPedido"] = "Solo puedes cancelar pedidos aprobados.";
             }
 
             return RedirectToAction(nameof(EmpleadoPedidos));

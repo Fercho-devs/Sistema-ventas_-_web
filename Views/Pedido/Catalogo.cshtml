@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Catálogo — Quesito Store</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     
@@ -85,6 +86,7 @@
     </style>
 </head>
 <body>
+    @Html.AntiForgeryToken()
 
     <!-- NAVBAR -->
     <nav class="navbar">
@@ -244,6 +246,7 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: 'idProducto=' + idProducto + '&cantidad=' + cantidad + '&tallaSeleccionada=' + encodeURIComponent(tallaSeleccionada)
+                            + '&__RequestVerificationToken=' + encodeURIComponent(document.querySelector('input[name="__RequestVerificationToken"]').value)
                     })
                 .then(r => r.json())
                 .then(data => {

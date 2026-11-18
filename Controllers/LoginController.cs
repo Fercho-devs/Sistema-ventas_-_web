@@ -149,7 +149,7 @@ namespace SistemaWeb_Ventas.Controllers
             {
                 "Administrador" => RedirectToAction("Administrador", "Welcome"),
                 "Empleado" => RedirectToAction("Empleado", "Welcome"),
-                "Repartidor" => RedirectToAction("Repartidor", "Welcome"),
+                "Repartidor" => RedirectToAction("Index", "Repartidor"),
                 "Cliente" => RedirectToAction("Index", "Home"),
                 _ => RedirectToAction("Index", "Home")
             };
@@ -158,13 +158,9 @@ namespace SistemaWeb_Ventas.Controllers
         // GET: Mostrar formulario de registro
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Registro()
+        public IActionResult Registro()
         {
-            var vm = new UsuarioVM
-            {
-                Roles = await _db.Roles.ToListAsync() // Cargar TODOS los roles
-            };
-            return View(vm);
+            return View(new UsuarioVM());
         }
 
         // POST: Registrar un nuevo usuario
@@ -172,21 +168,17 @@ namespace SistemaWeb_Ventas.Controllers
         [HttpPost]
         public async Task<IActionResult> Registro(UsuarioVM model)
         {
-            // Cargar los roles que se muestran en el formulario
-            model.Roles = await _db.Roles.ToListAsync();
-
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // Verificar que el rol exista en la base de datos
-            var rolSeleccionado = await _db.Roles
-                .FirstOrDefaultAsync(r => r.IdRol == model.IdRol);
+            var rolCliente = await _db.Roles
+                .FirstOrDefaultAsync(r => r.NombreRol == "Cliente");
 
-            if (rolSeleccionado == null)
+            if (rolCliente == null)
             {
-                ModelState.AddModelError("IdRol", "El rol seleccionado no es válido.");
+                ModelState.AddModelError("", "No se encontró el rol Cliente.");
                 return View(model);
             }
 
@@ -207,7 +199,7 @@ namespace SistemaWeb_Ventas.Controllers
                 Telefono = model.Telefono,
                 Direccion = model.Direccion,
                 Correo = model.Correo.Trim(),
-                IdRol = rolSeleccionado.IdRol
+                IdRol = rolCliente.IdRol
             };
 
             // Generar un hash seguro para la contraseña

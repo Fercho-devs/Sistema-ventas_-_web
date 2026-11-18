@@ -18,6 +18,7 @@ namespace SistemaWeb_Ventas.Data
         public DbSet<EstadoEntrega> EstadosEntrega { get; set; }
         public DbSet<Carrito> Carritos { get; set; }
         public DbSet<CarritoDetalle> CarritoDetalles { get; set; }
+        public DbSet<RegistroAuditoria> RegistrosAuditoria { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -97,6 +98,12 @@ namespace SistemaWeb_Ventas.Data
                 .HasOne(cd => cd.Producto)
                 .WithMany(p => p.CarritoDetalles)
                 .HasForeignKey(cd => cd.IdProducto);
+
+            modelBuilder.Entity<RegistroAuditoria>()
+                .HasOne(a => a.Usuario)
+                .WithMany()
+                .HasForeignKey(a => a.IdUsuario)
+                .OnDelete(DeleteBehavior.SetNull);
 
             //************ SEED DATA ************
 

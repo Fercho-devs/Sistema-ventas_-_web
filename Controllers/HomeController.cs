@@ -17,6 +17,20 @@ namespace SistemaWeb_Ventas.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var rol = HttpContext.Session.GetString("UsuarioRol")
+                    ?? User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+                return rol switch
+                {
+                    "Administrador" => RedirectToAction("Administrador", "Welcome"),
+                    "Empleado" => RedirectToAction("Empleado", "Welcome"),
+                    "Repartidor" => RedirectToAction("Index", "Repartidor"),
+                    _ => await VistaCliente()
+                };
+            }
+
             var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
 
             if (!string.IsNullOrEmpty(usuarioIdString) && int.TryParse(usuarioIdString, out int idUsuario))
@@ -33,6 +47,22 @@ namespace SistemaWeb_Ventas.Controllers
             }
 
             return View();
+        }
+
+        private async Task<IActionResult> VistaCliente()
+        {
+            var usuarioIdString = HttpContext.Session.GetString("UsuarioId");
+
+            if (!string.IsNullOrEmpty(usuarioIdString) && int.TryParse(usuarioIdString, out int idUsuario))
+            {
+                ViewBag.PedidosRecientes = await _db.Pedidos
+                    .Where(p => p.IdCliente == idUsuario)
+                    .OrderByDescending(p => p.FechaPedido)
+                    .Take(2)
+                    .ToListAsync();
+            }
+
+            return View("Index");
         }
 
         public IActionResult Privacy()

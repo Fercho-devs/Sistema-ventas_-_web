@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Panel Admin — Quesito Store</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <style>
@@ -223,10 +224,37 @@
             <p class="welcome-text">Gestiona tu tienda de manera eficiente. Selecciona una opción para comenzar.</p>
         </div>
 
+        <div class="row g-3 mb-5">
+            <div class="col-6 col-lg-3">
+                <div class="menu-card py-4 px-3">
+                    <p class="text-muted small mb-1">Ventas pagadas</p>
+                    <h3 class="mb-0" style="color:#e63946;">S/ @(((decimal)ViewBag.TotalVentas).ToString("0.00"))</h3>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="menu-card py-4 px-3">
+                    <p class="text-muted small mb-1">Pedidos pendientes</p>
+                    <h3 class="mb-0">@ViewBag.PedidosPendientes</h3>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="menu-card py-4 px-3">
+                    <p class="text-muted small mb-1">Clientes</p>
+                    <h3 class="mb-0">@ViewBag.TotalClientes</h3>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="menu-card py-4 px-3">
+                    <p class="text-muted small mb-1">Productos activos</p>
+                    <h3 class="mb-0">@ViewBag.ProductosActivos</h3>
+                </div>
+            </div>
+        </div>
+
         <!-- TARJETAS DE MENÚ -->
         <div class="row g-4">
             <!-- Pedidos -->
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <a asp-controller="Pedido" asp-action="Index" class="menu-card">
                     <div class="menu-icon" style="color:#e63946;">
                         <i class="bi bi-bag-check"></i>
@@ -238,13 +266,45 @@
             </div>
 
             <!-- Productos -->
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <a asp-controller="Producto" asp-action="Index" class="menu-card">
                     <div class="menu-icon" style="color:#e63946;">
                         <i class="bi bi-grid"></i>
                     </div>
                     <h4>Productos</h4>
                     <p>Administrar el catálogo, actualizar stock, precios y añadir nuevas prendas a tu tienda online.</p>
+                    <i class="bi bi-arrow-right arrow-icon"></i>
+                </a>
+            </div>
+
+            <!-- Usuarios -->
+            <div class="col-md-4">
+                <a asp-controller="Usuario" asp-action="Index" class="menu-card">
+                    <div class="menu-icon" style="color:#e63946;">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h4>Usuarios</h4>
+                    <p>Crear y gestionar empleados y repartidores, actualizar sus datos y restablecer contraseñas.</p>
+                    <i class="bi bi-arrow-right arrow-icon"></i>
+                </a>
+            </div>
+
+            <!-- Clientes -->
+            <div class="col-md-4">
+                <a asp-controller="Cliente" asp-action="Index" class="menu-card">
+                    <div class="menu-icon" style="color:#e63946;"><i class="bi bi-person-badge"></i></div>
+                    <h4>Clientes</h4>
+                    <p>Consultar cuentas registradas, datos de contacto y pedidos realizados.</p>
+                    <i class="bi bi-arrow-right arrow-icon"></i>
+                </a>
+            </div>
+
+            <!-- Auditoría -->
+            <div class="col-md-4">
+                <a asp-controller="Auditoria" asp-action="Index" class="menu-card">
+                    <div class="menu-icon" style="color:#e63946;"><i class="bi bi-journal-text"></i></div>
+                    <h4>Auditoría</h4>
+                    <p>Revisar aprobaciones, pagos, cancelaciones y cambios registrados en el sistema.</p>
                     <i class="bi bi-arrow-right arrow-icon"></i>
                 </a>
             </div>

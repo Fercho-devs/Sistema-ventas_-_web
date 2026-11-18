@@ -1,0 +1,105 @@
+@media (max-width: 767.98px) {
+    .navbar,
+    nav.navbar {
+        padding: 12px 0;
+    }
+
+    .navbar > .container,
+    .navbar > .container-fluid,
+    nav > .container,
+    nav > .container-fluid {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .navbar-brand,
+    .brand {
+        font-size: 1.35rem !important;
+    }
+
+    .container,
+    .container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .table-responsive {
+        margin-bottom: 0;
+    }
+
+    .table {
+        min-width: 720px;
+    }
+
+    .table th,
+    .table td {
+        white-space: nowrap;
+    }
+
+    .btn-pill,
+    .btn-pill-white,
+    .btn-pill-outline,
+    .btn-red,
+    .btn-save,
+    .btn-cancel {
+        margin-bottom: 4px;
+    }
+
+    .delivery-card,
+    .card-dark,
+    .summary-card,
+    .order-card,
+    .history-card,
+    .cart-item {
+        border-radius: 12px;
+    }
+
+    .cart-item {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .cart-details {
+        min-width: 180px;
+    }
+
+    .qty-form,
+    .form-agregar,
+    .d-flex.gap-2 {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-title,
+    .panel-header h2 {
+        font-size: 1.8rem !important;
+    }
+
+    .menu-card,
+    .feature-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .menu-card h4 {
+        font-size: 1.35rem;
+    }
+
+    .menu-icon {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 1.25rem;
+    }
+
+    .order-header,
+    .history-header,
+    .cliente-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .product-img-container {
+        height: 200px;
+    }
+}

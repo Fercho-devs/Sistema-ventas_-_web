@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SistemaWeb_Ventas.Data;
 using SistemaWeb_Ventas.Models;
+using SistemaWeb_Ventas.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,13 +37,15 @@ builder.Services.AddScoped<
     IPasswordHasher<Usuario>,
     PasswordHasher<Usuario>>();
 
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+
 // Configurar la autenticación mediante cookies
 builder.Services
     .AddAuthentication(
         CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login/Index";
+        options.LoginPath = "/Login/LogIn";
         options.AccessDeniedPath = "/Login/AccesoDenegado";
 
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
@@ -57,12 +60,12 @@ builder.Services
 var app = builder.Build();
 
 // Configurar el manejo de errores en producción
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage(); // Esto muestra errores detallados
+    app.UseDeveloperExceptionPage();
 }
 else
-{ 
+{
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }

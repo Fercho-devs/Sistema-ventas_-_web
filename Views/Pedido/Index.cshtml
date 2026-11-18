@@ -95,6 +95,7 @@
                         <th>Total</th>
                         <th>Estado</th>
                         <th>Pago</th>
+                        <th>Completo</th>
                         <th>Fecha</th>
                         <th class="text-center pe-3">Acciones</th>
                     </tr>
@@ -125,19 +126,28 @@
                                 <span class="status-badge status-pago-pendiente"><i class="bi bi-clock-fill me-1"></i> Pendiente</span>
                             }
                         </td>
+                        <td>
+                            @if (p.EstadoPedido == "Finalizado")
+                            {
+                                <span class="status-badge status-pago-pagado"><i class="bi bi-check-circle-fill me-1"></i> Sí</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-pago-pendiente"><i class="bi bi-clock-fill me-1"></i> No</span>
+                            }
+                        </td>
                         <td class="text-muted small">@p.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
                         <td class="text-center pe-3">
-                            @if(p.EstadoPedido == "Pendiente") {
+                            @if (p.EstadoPedido == "Pendiente")
+                            {
                                 <form asp-action="Aprobar" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
-                                    <button class="btn-action approve" title="Aprobar Pedido"><i class="bi bi-check-lg"></i></button>
-                                </form>
-                                <form asp-action="Cancelar" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0" onsubmit="return confirm('¿Estás seguro de cancelar este pedido?');">
-                                    <button class="btn-action cancel" title="Cancelar Pedido"><i class="bi bi-x-lg"></i></button>
+                                    <button class="btn-action approve" title="Aprobar pedido"><i class="bi bi-check-lg"></i></button>
                                 </form>
                             }
-                            @if(p.EstadoPago == "Pendiente" && p.EstadoPedido != "Cancelado") {
-                                <form asp-action="MarcarPagado" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
-                                    <button class="btn-action pay" title="Marcar como Pagado"><i class="bi bi-currency-dollar"></i></button>
+                            @if (p.EstadoPedido == "Aprobado")
+                            {
+                                <form asp-action="Desaprobar" asp-route-id="@p.IdPedido" method="post" class="d-inline m-0">
+                                    <button class="btn-action cancel" title="Desaprobar pedido"><i class="bi bi-x-lg"></i></button>
                                 </form>
                             }
                         </td>
@@ -146,6 +156,11 @@
                 </tbody>
             </table>
         </div>
+        <nav class="d-flex justify-content-between align-items-center mt-3" aria-label="Paginación">
+            <a asp-action="Index" asp-route-pagina="@(Math.Max(1, (int)ViewBag.PaginaActual - 1))" class="btn btn-outline-light rounded-pill @(ViewBag.PaginaActual <= 1 ? "disabled" : "")">Anterior</a>
+            <span class="text-muted small">Página @ViewBag.PaginaActual de @ViewBag.TotalPaginas</span>
+            <a asp-action="Index" asp-route-pagina="@(Math.Min((int)ViewBag.TotalPaginas, (int)ViewBag.PaginaActual + 1))" class="btn btn-outline-light rounded-pill @(ViewBag.PaginaActual >= ViewBag.TotalPaginas ? "disabled" : "")">Siguiente</a>
+        </nav>
     </div>
 </body>
 </html>

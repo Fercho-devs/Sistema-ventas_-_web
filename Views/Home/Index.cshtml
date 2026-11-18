@@ -1,8 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Inicio";
     Layout = null;
-    var isAuthenticated = User.Identity.IsAuthenticated;
-    var nombreUsuario = ViewBag.Nombre as string ?? User.Identity.Name;
+    var isAuthenticated = User?.Identity?.IsAuthenticated == true;
+    var nombreUsuario = ViewBag.Nombre as string ?? User?.Identity?.Name;
 }
 <!DOCTYPE html>
 <html lang="es">

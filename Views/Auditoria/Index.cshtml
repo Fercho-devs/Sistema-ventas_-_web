@@ -1,0 +1,77 @@
+@model IEnumerable<SistemaWeb_Ventas.Models.RegistroAuditoria>
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Auditoría — Administrador</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; }
+        .navbar { border-bottom: 1px solid #222; padding: 20px 0; }
+        .brand { color: #fff; text-decoration: none; font-size: 1.8rem; font-weight: 700; }
+        .brand span { color: #e63946; }
+        .card-dark { background: #111; border: 1px solid #222; border-radius: 14px; }
+        .table { color: #fff; }
+        .table th { color: #aaa; border-color: #222; }
+        .table td { border-color: #222; vertical-align: middle; }
+        .btn-pill { border-radius: 50px; }
+        .detail { max-width: 420px; color: #bbb; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="brand" href="#">QUESITO<span>.</span></a>
+            <a asp-controller="Welcome" asp-action="Administrador" class="btn btn-outline-light btn-pill">Panel</a>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <i class="bi bi-journal-text text-danger fs-3"></i>
+            <h3 class="fw-bold m-0">Registro de auditoría</h3>
+        </div>
+
+        <div class="card-dark p-3 table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Acción</th>
+                        <th>Entidad</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var registro in Model)
+                    {
+                        <tr>
+                            <td class="text-muted small">@registro.FechaHora.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@registro.NombreUsuario</td>
+                            <td><span class="badge bg-secondary">@registro.RolUsuario</span></td>
+                            <td class="text-danger fw-semibold">@registro.Accion</td>
+                            <td>@registro.Entidad @(registro.IdEntidad.HasValue ? "#" + registro.IdEntidad : "")</td>
+                            <td class="detail small">@registro.Detalle</td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="6" class="text-center text-muted py-5">Aún no hay acciones registradas.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <nav class="d-flex justify-content-between align-items-center mt-3" aria-label="Paginación">
+            <a asp-action="Index" asp-route-pagina="@(Math.Max(1, (int)ViewBag.PaginaActual - 1))" class="btn btn-outline-light rounded-pill @(ViewBag.PaginaActual <= 1 ? "disabled" : "")">Anterior</a>
+            <span class="text-muted small">Página @ViewBag.PaginaActual de @ViewBag.TotalPaginas</span>
+            <a asp-action="Index" asp-route-pagina="@(Math.Min((int)ViewBag.TotalPaginas, (int)ViewBag.PaginaActual + 1))" class="btn btn-outline-light rounded-pill @(ViewBag.PaginaActual >= ViewBag.TotalPaginas ? "disabled" : "")">Siguiente</a>
+        </nav>
+    </div>
+</body>
+</html>

@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaWeb_Ventas.Data;
 using SistemaWeb_Ventas.Models;
 
-namespace SistemaWeb_Ventas.Controllers  // ✅ NAMESPACE CORREGIDO
+namespace SistemaWeb_Ventas.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class ProductoController : Controller
     {
         private readonly AppDbContext _db;
@@ -20,7 +22,7 @@ namespace SistemaWeb_Ventas.Controllers  // ✅ NAMESPACE CORREGIDO
         private IActionResult? VerificarAdmin()
         {
             if (HttpContext.Session.GetString("UsuarioRol") != "Administrador")
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("LogIn", "Login");
             return null;
         }
 
